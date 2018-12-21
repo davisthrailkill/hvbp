@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1545410969841.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1902824057",
+    "id" : "E0B7D07B",
+    "lastKnownWriteTime" : 1545411178,
+    "last_content_update" : 1545411178284,
+    "path" : "~/Desktop/NSS/nss_projects/r-projects/hvbp/hvbp_script.R",
+    "project_path" : "hvbp_script.R",
+    "properties" : {
+        "cursorPosition" : "8,0",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

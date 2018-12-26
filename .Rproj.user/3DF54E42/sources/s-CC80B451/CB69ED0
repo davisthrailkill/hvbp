@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1545853907620.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "CB69ED0",
+    "lastKnownWriteTime" : 1544893969,
+    "last_content_update" : 1544893969,
+    "path" : "~/Desktop/NSS/nss_projects/r-projects/data-question-5-opioids-navy-cats/opioids.R",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "128,45",
+        "scrollLine" : "116"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

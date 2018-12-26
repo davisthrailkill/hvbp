@@ -7,16 +7,17 @@
     "folds" : "",
     "hash" : "0",
     "id" : "E0B7D07B",
-    "lastKnownWriteTime" : 1545413361,
-    "last_content_update" : 1545413361553,
+    "lastKnownWriteTime" : 1545862182,
+    "last_content_update" : 1545862182064,
     "path" : "~/Desktop/NSS/nss_projects/r-projects/hvbp/hvbp_script.R",
     "project_path" : "hvbp_script.R",
     "properties" : {
-        "cursorPosition" : "8,0",
-        "scrollLine" : "0",
+        "cursorPosition" : "76,69",
+        "docOutlineVisible" : "0",
+        "scrollLine" : "40",
         "tempName" : "Untitled1"
     },
-    "relative_order" : 1,
+    "relative_order" : 2,
     "source_on_save" : false,
     "source_window" : "",
     "type" : "r_source"

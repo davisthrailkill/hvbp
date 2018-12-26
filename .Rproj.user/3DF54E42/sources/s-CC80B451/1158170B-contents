@@ -1,0 +1,61 @@
+library(tidyverse)
+
+opioids <- as.data.frame(read_csv('data/opioids.csv'))
+overdoses <- as.data.frame(read_csv('data/overdoses.csv'))
+prescribers <- as.data.frame(read_csv('data/prescriber-info.csv'))
+
+not_states <- list('AA','GU','AE','ZZ')
+prescribers <- prescribers[!(prescribers$State %in% not_states), ]
+
+#oxycontin <- prescribers %>% 
+  group_by(State, Gender) %>% 
+  summarize(oxy = sum(OXYCONTIN))
+
+#ggplot(oxycontin, aes(x=reorder(State, -oxy), y=oxy, fill=Gender)) +
+  #geom_col() +
+  #xlab("State") +
+  #ylab("Oxycontin Prescriptions") +
+  #ggtitle("Oxycontin Prescriptions per State")
+
+overdoses <- overdoses %>% 
+  mutate(Percentage = (Deaths/Population)*100)
+
+ggplot(overdoses, aes(x=reorder(Abbrev, -Deaths), y=Deaths)) +
+  geom_col() +
+  xlab("State") +
+  ylab("Overdose Deaths") +
+  ggtitle("Overdose Deaths per State")
+
+ggplot(overdoses, aes(x=reorder(Abbrev, -Percentage), y=Percentage)) +
+  geom_col() +
+  xlab("State") +
+  ylab("Percentage of Population") +
+  ggtitle("Percentage of Population Dying from Overdose per State")
+
+#fentanyl <- prescribers %>% 
+  #group_by(Specialty) %>% 
+  #summarize(fent = sum(FENTANYL)) %>% 
+  #arrange(desc(fent))
+
+#top_10_fent <- head(fentanyl, 10)
+
+#ggplot(top_10_fent, aes(x=reorder(Specialty, -fent), y=fent)) +
+  #geom_col() +
+  #xlab("Specialty") +
+  #ylab("Fentanyl Prescriptions") +
+  #theme(axis.text.x = element_text(angle=60, hjust=1)) +
+  #ggtitle("Fentanyl Prescriptions by Specialty")
+
+#filter for only opioid prescribers and group by state to get a count
+opioids_prescribers <- prescribers %>%
+  filter(Opioid.Prescriber == 1) %>%
+  group_by(State) %>% 
+  summarise(count_npi = n_distinct(NPI)) %>% 
+  arrange(desc(count_npi))
+
+#plot the count of count opioid prescribers per state
+ggplot(opioids_prescribers, aes(x=reorder(State, -count_npi), y=count_npi)) +
+  geom_col() +
+  xlab("State") +
+  ylab("Count of Providers") +
+  ggtitle("Count of Opioid Prescribing Providers per State")

@@ -7,7 +7,8 @@ safety <- read.csv("data/hvbp_safety.csv")
 efficiency <- read.csv("data/hvbp_efficiency.csv")
 hospitals <- read.csv("data/hospital_info.csv")
 
-# clean datasets so that ratings are single digits or NA
+# clean datasets
+# tps
 tps[tps == "Not Available"] <- NA
 tps$Unweighted.Normalized.Clinical.Care.Domain.Score <- as.numeric(as.character(tps$Unweighted.Normalized.Clinical.Care.Domain.Score))
 tps$Weighted.Normalized.Clinical.Care.Domain.Score <- as.numeric(as.character(tps$Weighted.Normalized.Clinical.Care.Domain.Score))
@@ -21,26 +22,62 @@ tps$Unweighted.Normalized.Safety.Domain.Score <- as.numeric(as.character(tps$Unw
 tps$Weighted.Safety.Domain.Score <- as.numeric(as.character(tps$Weighted.Safety.Domain.Score))
 tps$Total.Performance.Score <- as.numeric(as.character(tps$Total.Performance.Score))
 
-# clean other datasets - need to get columns to numeric values
-
+# clinical
 clinical <- clinical_care %>% 
   apply(2, function(y) gsub(" out of 10", "", y)) %>% 
   apply(2, function(y) gsub(" out of 9", "", y)) %>% 
   apply(2, function(y) gsub("Not Available", NA, y)) %>% 
   as.data.frame()
 
+#clinical$MORT.30.AMI.Achievement.Threshold <- as.numeric(clinical$MORT.30.AMI.Achievement.Threshold)
+#clinical$MORT.30.AMI.Benchmark <- as.numeric(clinical$MORT.30.AMI.Benchmark)
+clinical$MORT.30.AMI.Baseline.Rate <- as.numeric(as.character(clinical$MORT.30.AMI.Baseline.Rate))
+clinical$MORT.30.AMI.Performance.Rate <- as.numeric(as.character(clinical$MORT.30.AMI.Performance.Rate))
+#clinical$MORT.30.HF.Achievement.Threshold <- as.numeric(clinical$MORT.30.HF.Achievement.Threshold)
+#clinical$MORT.30.HF.Benchmark <- as.numeric(clinical$MORT.30.HF.Benchmark)
+clinical$MORT.30.HF.Baseline.Rate <- as.numeric(as.character(clinical$MORT.30.HF.Baseline.Rate))
+clinical$MORT.30.HF.Performance.Rate <- as.numeric(as.character(clinical$MORT.30.HF.Performance.Rate))
+#clinical$MORT.30.PN.Achievement.Threshold <- as.numeric(clinical$MORT.30.PN.Achievement.Threshold)
+#clinical$MORT.30.PN.Benchmark <- as.numeric(clinical$MORT.30.PN.Benchmark)
+clinical$MORT.30.PN.Baseline.Rate <- as.numeric(as.character(clinical$MORT.30.PN.Baseline.Rate))
+clinical$MORT.30.PN.Performance.Rate <- as.numeric(as.character(clinical$MORT.30.PN.Performance.Rate))
+
+# patient experience
 pat_exp <- pat_experience %>% 
   apply(2, function(y) gsub(" out of 10", "", y)) %>% 
   apply(2, function(y) gsub(" out of 9", "", y)) %>% 
   apply(2, function(y) gsub("Not Available", NA, y)) %>% 
   as.data.frame()
 
+pat_exp$Communication.with.Nurses.Baseline.Rate <- as.numeric(as.character(pat_exp$Communication.with.Nurses.Baseline.Rate))
+pat_exp$Communication.with.Nurses.Performance.Rate <- as.numeric(as.character(pat_exp$Communication.with.Nurses.Performance.Rate))
+pat_exp$Communication.with.Doctors.Baseline.Rate <- as.numeric(as.character(pat_exp$Communication.with.Doctors.Baseline.Rate))
+pat_exp$Communication.with.Doctors.Performance.Rate <- as.numeric(as.character(pat_exp$Communication.with.Doctors.Performance.Rate))
+pat_exp$Responsiveness.of.Hospital.Staff.Baseline.Rate <- as.numeric(as.character(pat_exp$Responsiveness.of.Hospital.Staff.Baseline.Rate))
+pat_exp$Responsiveness.of.Hospital.Staff.Performance.Rate <- as.numeric(as.character(pat_exp$Responsiveness.of.Hospital.Staff.Performance.Rate))
+pat_exp$Care.Transition.Baseline.Rate <- as.numeric(as.character(pat_exp$Care.Transition.Baseline.Rate))
+pat_exp$Care.Transition.Performance.Rate <- as.numeric(as.character(pat_exp$Care.Transition.Performance.Rate))
+pat_exp$Communication.about.Medicines.Baseline.Rate <- as.numeric(as.character(pat_exp$Communication.about.Medicines.Baseline.Rate))
+pat_exp$Communication.about.Medicines.Performance.Rate <- as.numeric(as.character(pat_exp$Communication.about.Medicines.Performance.Rate))
+pat_exp$Cleanliness.and.Quietness.of.Hospital.Environment.Baseline.Rate <-
+  as.numeric(as.character(pat_exp$Cleanliness.and.Quietness.of.Hospital.Environment.Baseline.Rate))
+pat_exp$Cleanliness.and.Quietness.of.Hospital.Environment.Performance.Rate <-
+  as.numeric(as.character(pat_exp$Cleanliness.and.Quietness.of.Hospital.Environment.Performance.Rate))
+pat_exp$Discharge.Information.Baseline.Rate <- as.numeric(as.character(pat_exp$Discharge.Information.Baseline.Rate))
+pat_exp$Discharge.Information.Performance.Rate <- as.numeric(as.character(pat_exp$Discharge.Information.Performance.Rate))
+pat_exp$Overall.Rating.of.Hospital.Baseline.Rate <- as.numeric(as.character(pat_exp$Overall.Rating.of.Hospital.Baseline.Rate))
+pat_exp$Overall.Rating.of.Hospital.Performance.Rate <- as.numeric(as.character(pat_exp$Overall.Rating.of.Hospital.Performance.Rate))
+
+# safety
 safe <- safety %>%
   apply(2, function(y) gsub(" out of 10", "", y)) %>% 
   apply(2, function(y) gsub(" out of 9", "", y)) %>% 
   apply(2, function(y) gsub("Not Available", NA, y)) %>% 
   as.data.frame()
 
+# clean safety dataset here
+
+# efficiency
 eff <- efficiency %>% 
   apply(2, function(y) gsub(" out of 10", "", y)) %>% 
   apply(2, function(y) gsub(" out of 9", "", y)) %>% 
@@ -84,7 +121,6 @@ ggplot(tps, aes(x=factor(Hospital.Type))) +
   labs(x="Hospital Type", y="Count", title="Count of Hospitals by Type") +
   theme(axis.text.x = element_text(angle = 60, hjust = 1, vjust = 1))
 
-#tps$Total.Performance.Score <- as.numeric(as.character(tps$Total.Performance.Score))
 
 ownership_scores <- tps %>% 
   group_by(Hospital.Ownership) %>% 

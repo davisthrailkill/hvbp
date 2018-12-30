@@ -6,6 +6,8 @@ pat_experience <- read.csv("data/hvbp_patient_experience.csv")
 safety <- read.csv("data/hvbp_safety.csv")
 efficiency <- read.csv("data/hvbp_efficiency.csv")
 hospitals <- read.csv("data/hospital_info.csv")
+cities16 <- read.csv("data/500_cities_2016.csv")
+cities18 <- read.csv("data/500_cities_2018.csv")
 
 # clean datasets
 # tps
@@ -75,7 +77,22 @@ safe <- safety %>%
   apply(2, function(y) gsub("Not Available", NA, y)) %>% 
   as.data.frame()
 
-# clean safety dataset here
+safe$PSI.90.Baseline.Rate <- as.numeric(as.character(safe$PSI.90.Baseline.Rate))
+safe$PSI.90.Performance.Rate <- as.numeric(as.character(safe$PSI.90.Performance.Rate))
+safe$HAI.1.Baseline.Rate <- as.numeric(as.character(safe$HAI.1.Baseline.Rate))
+safe$HAI.1.Performance.Rate <- as.numeric(as.character(safe$HAI.1.Performance.Rate))
+safe$HAI.2.Baseline.Rate <- as.numeric(as.character(safe$HAI.2.Baseline.Rate))
+safe$HAI.2.Performance.Rate <- as.numeric(as.character(safe$HAI.2.Performance.Rate))
+safe$HAI.3.Baseline.Rate <- as.numeric(as.character(safe$HAI.3.Baseline.Rate))
+safe$HAI.3.Performance.Rate <- as.numeric(as.character(safe$HAI.3.Performance.Rate))
+safe$HAI.4.Baseline.Rate <- as.numeric(as.character(safe$HAI.4.Baseline.Rate))
+safe$HAI.4.Performance.Rate <- as.numeric(as.character(safe$HAI.4.Performance.Rate))
+safe$HAI.5.Baseline.Rate <- as.numeric(as.character(safe$HAI.5.Baseline.Rate))
+safe$HAI.5.Performance.Rate <- as.numeric(as.character(safe$HAI.5.Performance.Rate))
+safe$HAI.6.Baseline.Rate <- as.numeric(as.character(safe$HAI.6.Baseline.Rate))
+safe$HAI.6.Performance.Rate <- as.numeric(as.character(safe$HAI.6.Performance.Rate))
+safe$PC.01.Baseline.Rate <- as.numeric(as.character(safe$PC.01.Baseline.Rate))
+safe$PC.01.Performance.Rate <- as.numeric(as.character(safe$PC.01.Performance.Rate))
 
 # efficiency
 eff <- efficiency %>% 
@@ -83,6 +100,10 @@ eff <- efficiency %>%
   apply(2, function(y) gsub(" out of 9", "", y)) %>% 
   apply(2, function(y) gsub("Not Available", NA, y)) %>% 
   as.data.frame()
+
+eff$MSPB.1.Baseline.Rate <- as.numeric(as.character(eff$MSPB.1.Baseline.Rate))
+eff$MSPB.1.Performance.Rate <- as.numeric(as.character(eff$MSPB.1.Performance.Rate))
+
 
 # subset the hospital dataset to only include provider.id, type, ownership
 hospital_df <- hospitals[,c("Provider.ID", "Hospital.Type", "Hospital.Ownership")] %>% 
@@ -136,6 +157,15 @@ ggplot(ownership_scores, aes(x=reorder(Hospital.Ownership, -Mean.Score), y=Mean.
 
 
 
+### 500 CITIES ###
+
+cities18 <- cities18 %>% 
+  rename("Population2010" = "PopulationCount")
+
+cities16v2 <- select(cities16, -c("Data_Value_Footnote_Symbol", "Data_Value_Footnote"))
+cities18v2 <- select(cities18, -c("Data_Value_Footnote_Symbol", "Data_Value_Footnote"))
+
+cities_combined <- bind_rows(cities16v2, cities18v2)
 
 
 

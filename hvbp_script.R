@@ -166,8 +166,14 @@ cities16v2 <- select(cities16, -c("Data_Value_Footnote_Symbol", "Data_Value_Foot
 cities18v2 <- select(cities18, -c("Data_Value_Footnote_Symbol", "Data_Value_Footnote"))
 
 cities_combined <- bind_rows(cities16v2, cities18v2)
+cities_combined <- cities_combined %>%
+  rename("State" = "StateDesc",
+         "City" = "CityName")
 
+cities_combined <- cities_combined %>% 
+  separate(GeoLocation, into = c("Lat", "Long"), sep = ",", remove = FALSE)
 
-
-
+cities_combined$Lat <- gsub("\\(", "", cities_combined$Lat)
+cities_combined$Long <- gsub("\\)", "", cities_combined$Long)
+  
 

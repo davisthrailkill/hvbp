@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1546288671542.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2574547764",
+    "id" : "2488511A",
+    "lastKnownWriteTime" : 1544903599,
+    "last_content_update" : 1544903599,
+    "path" : "~/Desktop/NSS/nss_projects/r-projects/opioids_shinyapp/global.R",
+    "project_path" : null,
+    "properties" : {
+    },
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

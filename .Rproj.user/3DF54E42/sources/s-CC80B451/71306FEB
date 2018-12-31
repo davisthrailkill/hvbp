@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1546288595928.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1307519194",
+    "id" : "71306FEB",
+    "lastKnownWriteTime" : 1546291385,
+    "last_content_update" : 1546291385319,
+    "path" : "~/Desktop/NSS/nss_projects/r-projects/hvbp/five_hundred_cities/global.R",
+    "project_path" : "five_hundred_cities/global.R",
+    "properties" : {
+        "cursorPosition" : "8,10",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

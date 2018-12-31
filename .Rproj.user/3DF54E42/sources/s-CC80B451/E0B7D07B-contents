@@ -1,11 +1,13 @@
 library(tidyverse)
+library(ggmap)
+library(leaflet)
 
 tps <- read.csv("data/hvbp_tps.csv")
 clinical_care <- read.csv("data/hvbp_clinical.csv")
 pat_experience <- read.csv("data/hvbp_patient_experience.csv")
 safety <- read.csv("data/hvbp_safety.csv")
 efficiency <- read.csv("data/hvbp_efficiency.csv")
-hospitals <- read.csv("data/hospital_info.csv")
+hospitals <- read.csv("data/hospital_info.csv", stringsAsFactors = FALSE)
 cities16 <- read.csv("data/500_cities_2016.csv")
 cities18 <- read.csv("data/500_cities_2018.csv")
 
@@ -104,10 +106,27 @@ eff <- efficiency %>%
 eff$MSPB.1.Baseline.Rate <- as.numeric(as.character(eff$MSPB.1.Baseline.Rate))
 eff$MSPB.1.Performance.Rate <- as.numeric(as.character(eff$MSPB.1.Performance.Rate))
 
+# geocoding hospital locations
+
+#hospitals_first_half <- hospitals[1:2500,]
+#hospital_first_locations <- paste(hospitals_first_half$Address, " ",
+                                  #hospitals_first_half$City, ", ",
+                                  #hospitals_first_half$State, " ",
+                                  #hospitals_first_half$ZIP.Code)
+#hospital_coords <- geocode(hospital_first_locations)
+
+#for(i in 1:nrow(hospitals)){
+  #result <- geocode(hospitals$Location[i], output = "latlon", source = "google")
+  #hospitals$lat[i] <- as.numeric(result[1])
+  #hospitals$lon[i] <- as.numeric(result[2])
+#}
+
 
 # subset the hospital dataset to only include provider.id, type, ownership
 hospital_df <- hospitals[,c("Provider.ID", "Hospital.Type", "Hospital.Ownership")] %>% 
   rename("Provider.Number" = "Provider.ID")
+
+# hospital_frame <- data.frame(cbind(hospital_df, hospital_coords))
 
 # change type of provider.number in datasets to be integers for merging
 tps$Provider.Number <- as.integer(as.character(tps$Provider.Number))
@@ -175,5 +194,18 @@ cities_combined <- cities_combined %>%
 
 cities_combined$Lat <- gsub("\\(", "", cities_combined$Lat)
 cities_combined$Long <- gsub("\\)", "", cities_combined$Long)
-  
+
+cities_combined$Lat <- as.numeric(cities_combined$Lat)
+cities_combined$Long <- as.numeric(cities_combined$Long)
+
+# extract cities from cities_combined
+cities_df <- cities_combined %>% 
+  filter(GeographicLevel == "City") %>% 
+  saveRDS(file = "data/cities_df.rds")
+
+#leaflet(cities_df) %>% 
+  #addTiles() %>% 
+  #addCircleMarkers(cities_df$Long, cities_df$Lat, popup = cities_df$City)
+
+
 

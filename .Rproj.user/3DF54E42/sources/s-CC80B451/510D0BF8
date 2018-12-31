@@ -5,15 +5,15 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "2913122655",
+    "hash" : "443223787",
     "id" : "510D0BF8",
-    "lastKnownWriteTime" : 1546292657,
-    "last_content_update" : 1546292657650,
+    "lastKnownWriteTime" : 1546295694,
+    "last_content_update" : 1546295694912,
     "path" : "~/Desktop/NSS/nss_projects/r-projects/hvbp/five_hundred_cities/server.R",
     "project_path" : "five_hundred_cities/server.R",
     "properties" : {
-        "cursorPosition" : "9,21",
-        "scrollLine" : "3"
+        "cursorPosition" : "6,0",
+        "scrollLine" : "0"
     },
     "relative_order" : 3,
     "source_on_save" : false,

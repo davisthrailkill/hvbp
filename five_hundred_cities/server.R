@@ -2,7 +2,10 @@
 shinyServer(function(input, output) {
   
   filteredData <- reactive({
-    x <- cities_frame[cities_frame$State == input$States,]
+    x <- cities_frame[cities_frame$State == input$States &
+                        cities_frame$Category == input$Categories &
+                        cities_frame$Short_Question_Text == input$Measures &
+                        cities_frame$Year == input$Year,]
   })
 
    
@@ -14,7 +17,7 @@ shinyServer(function(input, output) {
     leaflet(data = df) %>% 
       addTiles() %>% 
       setView(-98.5795, 39.8283, zoom = 4) %>% 
-      addCircleMarkers(~Long, ~Lat, popup = df$City)
+      addCircleMarkers(~Long, ~Lat)
   })
   
   #observe({

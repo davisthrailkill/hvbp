@@ -107,11 +107,10 @@ eff$MSPB.1.Baseline.Rate <- as.numeric(as.character(eff$MSPB.1.Baseline.Rate))
 eff$MSPB.1.Performance.Rate <- as.numeric(as.character(eff$MSPB.1.Performance.Rate))
 
 # geocoding hospital locations
-
 #hospitals_first_half <- hospitals[1:2500,]
-#hospital_first_locations <- paste(hospitals_first_half$Address, " ",
-                                  #hospitals_first_half$City, ", ",
-                                  #hospitals_first_half$State, " ",
+#hospital_first_locations <- paste(hospitals_first_half$Address,
+                                  #hospitals_first_half$City,
+                                  #hospitals_first_half$State,
                                   #hospitals_first_half$ZIP.Code)
 #hospital_coords <- geocode(hospital_first_locations)
 
@@ -200,12 +199,8 @@ cities_combined$Long <- as.numeric(cities_combined$Long)
 
 # extract cities from cities_combined
 cities_df <- cities_combined %>% 
-  filter(GeographicLevel == "City") %>% 
+  filter(GeographicLevel != "Census Tract") %>% 
   saveRDS(file = "data/cities_df.rds")
-
-#leaflet(cities_df) %>% 
-  #addTiles() %>% 
-  #addCircleMarkers(cities_df$Long, cities_df$Lat, popup = cities_df$City)
 
 
 

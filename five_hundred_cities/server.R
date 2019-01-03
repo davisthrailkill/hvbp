@@ -3,9 +3,9 @@ shinyServer(function(input, output) {
   
   filteredData <- reactive({
     x <- cities_frame[cities_frame$State == input$States &
-                        cities_frame$Category == input$Categories &
-                        cities_frame$Short_Question_Text == input$Measures &
-                        cities_frame$Year == input$Year,]
+                        #cities_frame$Category == input$Categories &
+                        cities_frame$Short_Question_Text == input$Measures,]
+                        #cities_frame$Year == input$Year,]
   })
 
    

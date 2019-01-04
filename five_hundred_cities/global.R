@@ -3,9 +3,14 @@ library(leaflet)
 library(shinydashboard)
 
 cities_frame <- readRDS("../data/cities_df.rds")
+tracts_frame <- readRDS("../data/tracts_df.rds")
 
 states <- as.data.frame(cities_frame) %>% 
   select(State) %>% 
+  unique()
+
+cities <- as.data.frame(cities_frame) %>% 
+  select(City) %>% 
   unique()
 
 categories <- as.data.frame(cities_frame) %>% 

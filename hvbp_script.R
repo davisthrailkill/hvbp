@@ -10,6 +10,8 @@ efficiency <- read.csv("data/hvbp_efficiency.csv")
 hospitals <- read.csv("data/hospital_info.csv", stringsAsFactors = FALSE)
 cities16 <- read.csv("data/500_cities_2016.csv")
 cities18 <- read.csv("data/500_cities_2018.csv")
+chdb_city <- read.csv("data/chdb_city.csv")
+chdb_tract <- read.csv("data/chdb_tract.csv")
 
 # clean datasets
 # tps
@@ -175,6 +177,7 @@ ggplot(ownership_scores, aes(x=reorder(Hospital.Ownership, -Mean.Score), y=Mean.
 
 
 
+
 ### 500 CITIES ###
 
 cities18 <- cities18 %>% 
@@ -197,10 +200,65 @@ cities_combined$Long <- gsub("\\)", "", cities_combined$Long)
 cities_combined$Lat <- as.numeric(cities_combined$Lat)
 cities_combined$Long <- as.numeric(cities_combined$Long)
 
+cities_geography <- cities_combined %>% 
+  filter(StateAbbr != "US" & is.na(TractFIPS)) %>% 
+  select(StateAbbr, State, City, CityFIPS, GeoLocation, Lat, Long)
+
+tract_geography <- cities_combined %>% 
+  filter(StateAbbr != "US" & !is.na(TractFIPS)) %>% 
+  select(StateAbbr, State, City, CityFIPS, TractFIPS, GeoLocation, Lat, Long)
+
 # extract cities from cities_combined
 cities_df <- cities_combined %>% 
   filter(GeographicLevel != "Census Tract") %>% 
   saveRDS(file = "data/cities_df.rds")
 
+# extract tracts from cities_combined
+tracts_df <- cities_combined %>% 
+  filter(GeographicLevel == "Census Tract") %>% 
+  saveRDS(file = "data/tracts_df.rds")
 
 
+
+
+
+#### Looking at City Health Dashboard Data - Unsure if this will be used
+
+social_economic <- c("High school graduation", "Racial/ethnic diversity",
+                     "Third-grade reading proficiency","Absenteeism",
+                     "Children in poverty", "Housing cost, excessive",
+                     "Income inequality", "Neighborhood racial/ethnic segregation",
+                     "Unemployment", "Violent crime")
+
+physical_environment <- c("Park access", "Walkability", "Air pollution - particulate matter",
+                          "Housing with Potential Lead Risk", "Lead exposure risk index",
+                          "Limited access to healthy foods")
+
+health_behaviors <- c("Binge drinking", "Physical inactivity", "Smoking", "Teen births")
+
+health_outcomes <- c("Breast dancer deaths", "Cardiovascular disease deaths", 
+                     "Colorectal cancer deaths", "Diabetes", "Frequent mental distress",
+                     "Frequent physical distress", "High blood bressure", "Life expectancy",
+                     "Low birthweight", "Obesity", "Opioid overdose deaths", 
+                     "Premature deaths (all causes)")
+
+clinical_care <- c("Dental care", "Prenatal care", "Preventive services", "Uninsured")
+
+chdb_city$category <- ifelse(chdb_city$metric_name %in% social_economic, "Social and Economic Factors",
+                      ifelse(chdb_city$metric_name %in% physical_environment, "Physical Environment",
+                      ifelse(chdb_city$metric_name %in% health_behaviors, "Unhealthy Behaviors",
+                      ifelse(chdb_city$metric_name %in% health_outcomes, "Health Outcomes",
+                      ifelse(chdb_city$metric_name %in% clinical_care, "Prevention", NA)))))
+
+chdb_city$category <- as.factor(chdb_city$category)
+
+chdb_tract$category <- ifelse(chdb_tract$metric_name %in% social_economic, "Social and Economic Factors",
+                       ifelse(chdb_tract$metric_name %in% physical_environment, "Physical Environment",
+                       ifelse(chdb_tract$metric_name %in% health_behaviors, "Unhealthy Behaviors",
+                       ifelse(chdb_tract$metric_name %in% health_outcomes, "Health Outcomes",
+                       ifelse(chdb_tract$metric_name %in% clinical_care, "Prevention", NA)))))
+
+chdb_tract$category <- as.factor(chdb_tract$category)
+
+chdb_city_geo <- chdb_city %>% 
+  left_join(cities_geography, by = c("city_name" = "City", "stpl_fips" = "CityFIPS"))

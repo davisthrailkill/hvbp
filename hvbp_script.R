@@ -208,6 +208,12 @@ tract_geography <- cities_combined %>%
   filter(StateAbbr != "US" & !is.na(TractFIPS)) %>% 
   select(StateAbbr, State, City, CityFIPS, TractFIPS, GeoLocation, Lat, Long)
 
+#cities_combined_spread <- cities_combined %>% 
+  #select(Year, StateAbbr, State, City, GeographicLevel, Category, Measure, Data_Value_Type,
+         #Data_Value, Low_Confidence_Limit, High_Confidence_Limit, Population2010, 
+         #GeoLocation, Lat, Long, CityFIPS, TractFIPS, Short_Question_Text) %>% 
+  #spread(Data_Value_Type, Data_Value)
+
 # extract cities from cities_combined
 cities_df <- cities_combined %>% 
   filter(GeographicLevel != "Census Tract") %>% 

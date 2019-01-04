@@ -5,8 +5,8 @@ shinyUI(
     
     dashboardSidebar(
       sidebarMenu(
-        menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
-        menuItem("Inputs", icon = icon("widgets"),
+        menuItem("Interactive Map", tabName = "map", icon = icon("dashboard")),
+        #menuItem("Inputs", icon = icon("th"),
                  selectInput("States", "States", choices = states),
                  selectInput("Cities", "Cities", choices = cities),
                  selectInput("Categories", "Category", choices = categories),
@@ -24,17 +24,18 @@ shinyUI(
                    input.Measures == 'Taking BP Medication' ||
                    input.Measures == 'Cholesterol Screening' ||
                    input.Measures == 'High Cholesterol'",
-                   selectInput("Year", "Year", choices = odd_years))
+                   selectInput("Year", "Year", choices = odd_years)),
                  #conditionalPanel(
                    #condition = "!input.Measures %in% odd_measures",
                    #selectInput("Year", "Year", choices = even_years)))
-        ))
+        menuItem("Dashboard", tabName = "dashboard", icon = icon("th"))
+        )
     ),
     
     dashboardBody(
       tabItems(
-        tabItem(tabName = "dashboard", 
-                h2("500 Cities Dashboard"),
+        tabItem(tabName = "map", 
+                h2("Interactive Map"),
                 box(
                   height = '100%',
                   width = '100%',
@@ -45,7 +46,9 @@ shinyUI(
                   width = '100%',
                   dataTableOutput("table")
                 )
-                )
+                ),
+        tabItem(tabName = "dashboard",
+                h2("Dashboard"))
       )
       #tags$style(type = "text/css", "#map {height: calc(100vh - 80px) !important;}"),
       #leafletOutput("map")

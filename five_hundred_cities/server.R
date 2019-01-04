@@ -37,7 +37,7 @@ shinyServer(function(input, output) {
       #showCityPopup(event$id, event$lat, event$long)
     #})
     text <-
-      paste("City: ", click$id)
+      paste(click$id)
     
     leafletProxy(mapId = "map") %>%
       clearPopups() %>%

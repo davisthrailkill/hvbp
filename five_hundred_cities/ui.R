@@ -25,9 +25,12 @@ shinyUI(
                    input.Measures == 'Cholesterol Screening' ||
                    input.Measures == 'High Cholesterol'",
                    selectInput("Year", "Year", choices = odd_years)),
-                 #conditionalPanel(
-                   #condition = "!input.Measures %in% odd_measures",
-                   #selectInput("Year", "Year", choices = even_years)))
+                 conditionalPanel(
+                   condition = "input.Measures != 'High Blood Pressure &
+                   input.Measures != 'Taking BP Medication' &
+                   input.Measures != 'Cholesterol Sreening &
+                   input.Measures != 'High Cholesterol'",
+                   selectInput("Year", "Year", choices = even_years)),
         menuItem("Dashboard", tabName = "dashboard", icon = icon("th"))
         )
     ),

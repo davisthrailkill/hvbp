@@ -5,7 +5,8 @@ shinyUI(
     
     dashboardSidebar(
       sidebarMenu(
-        menuItem("Inputs", icon = icon("bar-chart-o"),
+        menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
+        menuItem("Inputs", icon = icon("widgets"),
                  selectInput("States", "States", choices = states),
                  selectInput("Cities", "Cities", choices = cities),
                  selectInput("Categories", "Category", choices = categories),
@@ -31,15 +32,20 @@ shinyUI(
     ),
     
     dashboardBody(
-      box(
-        height = '100%',
-        width = '100%',
-        leafletOutput("map")
-      ),
-      box(
-        height = '100%',
-        width = '100%',
-        dataTableOutput("table")
+      tabItems(
+        tabItem(tabName = "dashboard", 
+                h2("500 Cities Dashboard"),
+                box(
+                  height = '100%',
+                  width = '100%',
+                  leafletOutput("map")
+                ),
+                box(
+                  height = '100%',
+                  width = '100%',
+                  dataTableOutput("table")
+                )
+                )
       )
       #tags$style(type = "text/css", "#map {height: calc(100vh - 80px) !important;}"),
       #leafletOutput("map")

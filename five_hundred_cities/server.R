@@ -1,23 +1,59 @@
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
   
-  filteredData <- reactive({
-    x <- cities_frame[cities_frame$State == input$States &
-                        #cities_frame$Category == input$Categories &
-                        cities_frame$Short_Question_Text == input$Measures,]
-                        #cities_frame$Year == input$Year,]
+  output$map <- renderLeaflet({
+    leaflet() %>% 
+      addTiles() %>% 
+      setView(-98.5795, 39.8283, zoom = 4)
   })
   
-  output$map <- renderLeaflet({
-    df <- filteredData()
-    #mapdata <- cities_frame %>% 
-      #filter(State == input$States)
+  filteredData <- observeEvent(input$go, {
+    x <- cities_frame[cities_frame$State == input$States &
+                        cities_frame$City == input$Cities &
+                        cities_frame$Category == input$Categories &
+                        cities_frame$Short_Question_Text == input$Measures,]
+                        #cities_frame$Year == input$Year,]
+    leafletProxy("map") %>% 
+      clearMarkers() %>% 
+      addCircleMarkers(data = x, ~Long, ~Lat, layerId = ~City)
     
-    leaflet(data = df) %>% 
-      addTiles() %>% 
-      setView(-98.5795, 39.8283, zoom = 4) %>% 
-      addCircleMarkers(~Long, ~Lat, layerId = ~City)
+    output$table <- renderDataTable({
+      cities_frame_table <- x %>% 
+        #filter(State == input$States & 
+                 #City == input$Cities & 
+                 #Category == input$Categories & 
+                 #Short_Question_Text == input$Measures) %>% 
+        select(State, City, Category, Short_Question_Text, Data_Value)
+      })
+    })
   })
+    
+  #output$map <- renderLeaflet({
+    #df <- filteredData()
+      
+    #leaflet(data = filteredData()) %>% 
+      #addTiles() %>% 
+      #setView(-98.5795, 39.8283, zoom = 4) %>% 
+      #addCircleMarkers(~Long, ~Lat, layerId = ~City)
+      
+    #output$table <- renderDataTable({
+      #cities_frame_table <- cities_frame %>% 
+        #filter(State == input$States & 
+                  #City == input$Cities & 
+                  #Category == input$Categories & 
+                  #Short_Question_Text == input$Measures) %>% 
+        #select(State, City, Category, Short_Question_Text, Data_Value)
+    #})
+  #})
+  
+  #output$map <- renderLeaflet({
+    #df <- filteredData()
+    
+    #leaflet(data = df) %>% 
+      #addTiles() %>% 
+      #setView(-98.5795, 39.8283, zoom = 4) %>% 
+      #addCircleMarkers(~Long, ~Lat, layerId = ~City)
+  #})
   
   #showCityPopup <- function(city, lat, long){
     #selectedCity <- cities_frame[cities_frame$City == city,]
@@ -27,21 +63,21 @@ shinyServer(function(input, output) {
     #leafletProxy("map") %>% addPopups(long, lat, layerId = city)
   #}
   
-  observe({
+  #observe({
     #leafletProxy("map") %>% clearPopups()
-    click <- input$map_marker_click
-    if (is.null(click))
-      return()
+    #click <- input$map_marker_click
+    #if (is.null(click))
+      #return()
     
     #isolate({
       #showCityPopup(event$id, event$lat, event$long)
     #})
-    text <-
-      paste(click$id)
+    #text <-
+      #paste(click$id)
     
-    leafletProxy(mapId = "map") %>%
-      clearPopups() %>%
-      addPopups(dat = click, lat = ~lat, lng = ~lng, popup = text)
+    #leafletProxy(mapId = "map") %>%
+      #clearPopups() %>%
+      #addPopups(dat = click, lat = ~lat, lng = ~lng, popup = text)
     
     #output$table <- renderDataTable({
       #cities_frame_table <- cities_frame %>% 
@@ -52,13 +88,13 @@ shinyServer(function(input, output) {
         #select(State, City, Category, Short_Question_Text)
       #cities_frame[cities_frame$City == click$id,]
     #})
-  })
-  output$table <- renderDataTable({
-    cities_frame_table <- cities_frame %>% 
-      filter(State == input$States & 
-               City == input$Cities & 
-               Category == input$Categories & 
-               Short_Question_Text == input$Measures) %>% 
-      select(State, City, Category, Short_Question_Text, Data_Value)
-    })
-})
+  #})
+  #output$table <- renderDataTable({
+    #cities_frame_table <- cities_frame %>% 
+      #filter(State == input$States & 
+               #City == input$Cities & 
+               #Category == input$Categories & 
+               #Short_Question_Text == input$Measures) %>% 
+      #select(State, City, Category, Short_Question_Text, Data_Value)
+    #})
+#})

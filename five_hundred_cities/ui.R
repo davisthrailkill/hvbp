@@ -31,6 +31,7 @@ shinyUI(
                    input.Measures != 'Cholesterol Sreening &
                    input.Measures != 'High Cholesterol'",
                    selectInput("Year", "Year", choices = even_years)),
+        actionButton("go", "Go"),
         menuItem("Dashboard", tabName = "dashboard", icon = icon("th"))
         )
     ),

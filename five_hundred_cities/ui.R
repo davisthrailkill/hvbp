@@ -6,31 +6,20 @@ shinyUI(
     dashboardSidebar(
       sidebarMenu(
         menuItem("Interactive Map", tabName = "map", icon = icon("dashboard")),
-        #menuItem("Inputs", icon = icon("th"),
-                 selectInput("States", "States", choices = states),
-                 selectInput("Cities", "Cities", choices = cities),
-                 selectInput("Categories", "Category", choices = categories),
-                 conditionalPanel(
-                   condition = "input.Categories == 'Prevention'",
-                   selectInput("Measures", "Measures", choices = prevention_measures)),
-                 conditionalPanel(
-                   condition = "input.Categories == 'Health Outcomes'",
-                   selectInput("Measures", "Measures", choices = outcome_measures)),
-                 conditionalPanel(
-                   condition = "input.Categories == 'Unhealthy Behaviors'",
-                   selectInput("Measures", "Measures", choices = behavior_measures)),
-                 conditionalPanel(
-                   condition = "input.Measures == 'High Blood Pressure' ||
-                   input.Measures == 'Taking BP Medication' ||
-                   input.Measures == 'Cholesterol Screening' ||
-                   input.Measures == 'High Cholesterol'",
-                   selectInput("Year", "Year", choices = odd_years)),
-                 conditionalPanel(
-                   condition = "input.Measures != 'High Blood Pressure &
-                   input.Measures != 'Taking BP Medication' &
-                   input.Measures != 'Cholesterol Sreening &
-                   input.Measures != 'High Cholesterol'",
-                   selectInput("Year", "Year", choices = even_years)),
+        selectInput("States", "States", choices = states),
+        uiOutput("cityselection"),
+        #selectInput("Cities", "Cities", choices = cities),
+        selectInput("Categories", "Category", choices = categories),
+        uiOutput("measureselection"),
+        #conditionalPanel(
+          #condition = "input.Categories == 'Prevention'",
+          #selectInput("Measures", "Measures", choices = prevention_measures)),
+        #conditionalPanel(
+          #condition = "input.Categories == 'Health Outcomes'",
+          #selectInput("Measures", "Measures", choices = outcome_measures)),
+        #conditionalPanel(
+          #condition = "input.Categories == 'Unhealthy Behaviors'",
+          #selectInput("Measures", "Measures", choices = behavior_measures)),
         actionButton("go", "Go"),
         menuItem("Dashboard", tabName = "dashboard", icon = icon("th"))
         )

@@ -1,6 +1,19 @@
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
   
+  output$cityselection <- renderUI({
+    cities_available <- cities_frame[cities_frame$State == input$States, "City"]
+    
+    selectInput("Cities", "City", choices = unique(cities_available))
+  })
+  
+  output$measureselection <- renderUI({
+    measures_available <- cities_frame[cities_frame$Category == input$Categories, 
+                                       "Short_Question_Text"]
+    
+    selectInput("Measures", "Measures", choices = unique(measures_available))
+  })
+  
   output$map <- renderLeaflet({
     leaflet() %>% 
       addTiles() %>% 
@@ -8,11 +21,11 @@ shinyServer(function(input, output) {
   })
   
   filteredData <- observeEvent(input$go, {
-    x <- cities_frame[cities_frame$State == input$States &
-                        cities_frame$City == input$Cities &
-                        cities_frame$Category == input$Categories &
-                        cities_frame$Short_Question_Text == input$Measures,]
-                        #cities_frame$Year == input$Year,]
+    x <- subset(cities_frame, State == input$States &
+                        City == input$Cities &
+                        Category == input$Categories &
+                        Short_Question_Text == input$Measures)
+    
     leafletProxy("map") %>% 
       clearMarkers() %>% 
       addCircleMarkers(data = x, ~Long, ~Lat, layerId = ~City)
@@ -23,7 +36,21 @@ shinyServer(function(input, output) {
                  #City == input$Cities & 
                  #Category == input$Categories & 
                  #Short_Question_Text == input$Measures) %>% 
-        select(State, City, Category, Short_Question_Text, Data_Value)
+        select(State, City, Year, Category, Short_Question_Text, `Age-adjusted prevalence`,
+               `Crude prevalence`)
+      })
+    
+    observe({
+      click <- input$map_marker_click
+      if (is.null(click))
+        return()
+      
+      text <-
+        paste(click$id)
+      
+      leafletProxy(mapId = "map") %>%
+        clearPopups() %>%
+        addPopups(data = click, lat = ~lat, lng = ~lng, popup = text)
       })
     })
   })
@@ -77,7 +104,8 @@ shinyServer(function(input, output) {
     
     #leafletProxy(mapId = "map") %>%
       #clearPopups() %>%
-      #addPopups(dat = click, lat = ~lat, lng = ~lng, popup = text)
+      #addPopups(data = click, lat = ~lat, lng = ~lng, popup = text)
+  #})
     
     #output$table <- renderDataTable({
       #cities_frame_table <- cities_frame %>% 

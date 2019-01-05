@@ -35,9 +35,9 @@ shinyUI(
                   leafletOutput("map")
                 ),
                 box(
-                  height = '100%',
-                  width = '100%',
-                  dataTableOutput("table")
+                  dataTableOutput("table"),
+                  height = "100%",
+                  width = "100%"
                 )
                 ),
         tabItem(tabName = "dashboard",

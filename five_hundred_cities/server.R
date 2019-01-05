@@ -32,13 +32,14 @@ shinyServer(function(input, output) {
     
     output$table <- renderDataTable({
       cities_frame_table <- x %>% 
-        #filter(State == input$States & 
-                 #City == input$Cities & 
-                 #Category == input$Categories & 
-                 #Short_Question_Text == input$Measures) %>% 
         select(State, City, Year, Category, Short_Question_Text, `Age-adjusted prevalence`,
                `Crude prevalence`)
-      })
+      },rownames = FALSE, extensions = 'Buttons', options = list(dom = 'Bfrtip', 
+                                                                 buttons = list('copy', 'print', list(
+                                                                   extend = 'collection',
+                                                                   buttons = c('csv', 'excel', 'pdf'),
+                                                                   text = 'Download'
+                                                                 ))))
     
     observe({
       click <- input$map_marker_click
@@ -50,7 +51,8 @@ shinyServer(function(input, output) {
       
       leafletProxy(mapId = "map") %>%
         clearPopups() %>%
-        addPopups(data = click, lat = ~lat, lng = ~lng, popup = text)
+        addPopups(data = click, lat = ~lat, lng = ~lng, popup = text) %>% 
+        setView(lng = click$lng, lat = click$lat, zoom = 6)
       })
     })
   })

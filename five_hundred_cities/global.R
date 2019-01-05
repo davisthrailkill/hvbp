@@ -1,6 +1,7 @@
 library(tidyverse)
 library(leaflet)
 library(shinydashboard)
+library(DT)
 
 cities_frame <- readRDS("../data/cities_df.rds")
 tracts_frame <- readRDS("../data/tracts_df.rds")

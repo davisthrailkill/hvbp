@@ -21,6 +21,7 @@ shinyUI(
           #condition = "input.Categories == 'Unhealthy Behaviors'",
           #selectInput("Measures", "Measures", choices = behavior_measures)),
         actionButton("go", "Go"),
+        downloadButton("download", "Download"),
         menuItem("Dashboard", tabName = "dashboard", icon = icon("th"))
         )
     ),

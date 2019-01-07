@@ -2,9 +2,13 @@ library(tidyverse)
 library(leaflet)
 library(shinydashboard)
 library(DT)
+library(rgdal)
 
 cities_frame <- readRDS("../data/cities_df.rds")
+cities_geo <- readRDS("../data/cities_geo.rds")
 tracts_frame <- readRDS("../data/tracts_df.rds")
+tracts_geo <- readRDS("../data/tracts_geo.rds")
+tracts_shapes <- readOGR("../data/500Cities_Boundaries/CityBoundaries.shp")
 
 states <- as.data.frame(cities_frame) %>% 
   select(State) %>% 

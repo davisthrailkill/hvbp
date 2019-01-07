@@ -208,6 +208,14 @@ tract_geography <- cities_combined %>%
   filter(StateAbbr != "US" & !is.na(TractFIPS)) %>% 
   select(StateAbbr, State, City, CityFIPS, TractFIPS, GeoLocation, Lat, Long)
 
+cities_geo <- cities_geography %>% 
+  distinct() %>% 
+  saveRDS(file = "data/cities_geo.rds")
+
+tracts_geo <- tract_geography %>% 
+  distinct() %>% 
+  saveRDS(file = "data/tracts_geo.rds")
+
 cities_combined_v2 <- cities_combined %>% 
   select(Year, StateAbbr, State, City, GeographicLevel, Category, Measure, Data_Value_Type,
          Data_Value, Population2010, GeoLocation, Lat, Long, CityFIPS, TractFIPS, 

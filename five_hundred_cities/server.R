@@ -45,7 +45,7 @@ shinyServer(function(input, output) {
     
     output$table <- renderDataTable({
       cities_frame_table <- x %>% 
-        select(State, City, Year, Category, Short_Question_Text, `Age-adjusted prevalence`,
+        select(State, City, TractFIPS, Year, Category, Short_Question_Text, `Age-adjusted prevalence`,
                `Crude prevalence`)
       },rownames = FALSE, extensions = 'Buttons', options = list(dom = 'Bfrtip',
                                                                  buttons = list('copy', 'print', list(

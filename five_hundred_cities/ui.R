@@ -11,15 +11,6 @@ shinyUI(
         #selectInput("Cities", "Cities", choices = cities),
         selectInput("Categories", "Category", choices = categories),
         uiOutput("measureselection"),
-        #conditionalPanel(
-          #condition = "input.Categories == 'Prevention'",
-          #selectInput("Measures", "Measures", choices = prevention_measures)),
-        #conditionalPanel(
-          #condition = "input.Categories == 'Health Outcomes'",
-          #selectInput("Measures", "Measures", choices = outcome_measures)),
-        #conditionalPanel(
-          #condition = "input.Categories == 'Unhealthy Behaviors'",
-          #selectInput("Measures", "Measures", choices = behavior_measures)),
         actionButton("go", "Go"),
         downloadButton("download", "Download"),
         menuItem("Dashboard", tabName = "dashboard", icon = icon("th"))

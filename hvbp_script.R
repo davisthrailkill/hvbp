@@ -12,6 +12,7 @@ cities16 <- read.csv("data/500_cities_2016.csv")
 cities18 <- read.csv("data/500_cities_2018.csv")
 chdb_city <- read.csv("data/chdb_city.csv")
 chdb_tract <- read.csv("data/chdb_tract.csv")
+tract_zip <- read.csv("data/tract_zip.csv")
 
 # clean datasets
 # tps
@@ -276,4 +277,13 @@ chdb_tract$category <- ifelse(chdb_tract$metric_name %in% social_economic, "Soci
 chdb_tract$category <- as.factor(chdb_tract$category)
 
 chdb_city_geo <- chdb_city %>% 
-  left_join(cities_geography, by = c("city_name" = "City", "stpl_fips" = "CityFIPS"))
+  left_join(cities_geography, by = c("city_name" = "City", "stpl_fips" = "CityFIPS")) %>% 
+  distinct()
+
+chdb_tract_geo <- chdb_tract %>% 
+  left_join(tract_geography, by = c("city_name" = "City", "stcotr_fips" = "TractFIPS")) %>% 
+  distinct()
+
+# joining chdb tract data with zip codes
+chdb_tract_geo_v2 <- chdb_tract_geo %>% 
+  left_join(tract_zip, by = c("stcotr_fips" = "tract"))

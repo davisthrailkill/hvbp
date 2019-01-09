@@ -226,13 +226,13 @@ cities_combined_v2 <- cities_combined %>%
 
 # extract cities from cities_combined
 cities_df <- cities_combined_v2 %>% 
-  filter(GeographicLevel != "Census Tract") %>% 
-  saveRDS(file = "data/cities_df.rds")
+  filter(GeographicLevel != "Census Tract") #%>% 
+  #saveRDS(file = "data/cities_df.rds")
 
 # extract tracts from cities_combined
 tracts_df <- cities_combined_v2 %>% 
-  filter(GeographicLevel == "Census Tract") %>% 
-  saveRDS(file = "data/tracts_df.rds")
+  filter(GeographicLevel == "Census Tract") #%>% 
+  #saveRDS(file = "data/tracts_df.rds")
 
 
 
@@ -280,9 +280,33 @@ chdb_city_geo <- chdb_city %>%
   left_join(cities_geography, by = c("city_name" = "City", "stpl_fips" = "CityFIPS")) %>% 
   distinct()
 
+chdb_city_socecon <- chdb_city_geo %>% 
+  filter(category == "Social and Economic Factors" & group_name == "total population")
+
+chdb_cities <- unique(chdb_city_socecon$city_name)
+cities_chdb_df <- cities_df %>%
+  filter(City %in% chdb_cities)
+
+city_pops <- cities_chdb_df %>% 
+  select(CityFIPS, Population2010) %>% 
+  distinct()
+
+chdb_city_socecon <- chdb_city_socecon %>% 
+  left_join(city_pops, by = c("stpl_fips" = "CityFIPS"))
+
+chdb_city_socecon_v2 <- chdb_city_socecon %>% 
+  select(data_yr_type, StateAbbr, State, city_name, stpl_fips, geo_level, category, metric_name,
+         est, Population2010, GeoLocation, Lat, Long)
+
+### need to select only relevant columns from cities_chdb_df, then bind_rows with socecon_v2
+
+
 chdb_tract_geo <- chdb_tract %>% 
   left_join(tract_geography, by = c("city_name" = "City", "stcotr_fips" = "TractFIPS")) %>% 
   distinct()
+
+chdb_tract_socecon <- chdb_tract_geo %>% 
+  filter(category == "Social and Economic Factors" & group_name == "total population")
 
 # joining chdb tract data with zip codes
 chdb_tract_geo_v2 <- chdb_tract_geo %>% 

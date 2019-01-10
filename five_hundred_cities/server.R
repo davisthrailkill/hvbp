@@ -2,14 +2,14 @@
 shinyServer(function(input, output) {
   
   output$cityselection <- renderUI({
-    cities_available <- cities_frame[cities_frame$State == input$States, "City"]
+    cities_available <- combined_city_metrics[combined_city_metrics$State == input$States, "City"]
     
     selectInput("Cities", "City", choices = unique(cities_available))
   })
   
   output$measureselection <- renderUI({
-    measures_available <- cities_frame[cities_frame$Category == input$Categories, 
-                                       "Short_Question_Text"]
+    measures_available <- combined_city_metrics[combined_city_metrics$Category == input$Categories, 
+                                       "Measure"]
     
     selectInput("Measures", "Measures", choices = unique(measures_available))
   })
@@ -22,8 +22,8 @@ shinyServer(function(input, output) {
   })
   
   output$table <- renderDataTable({
-    cities_frame_table <- cities_frame %>% 
-      select(State, City, Year, Category, Short_Question_Text, `Crude prevalence`)
+    cities_frame_table <- combined_city_metrics %>% 
+      select(State, City, Year, Category, Measure, Performance)
   },rownames = FALSE, extensions = 'Buttons', options = list(dom = 'Bfrtip',
                                                              buttons = list('copy', 'print', list(
                                                                extend = 'collection',
@@ -32,10 +32,10 @@ shinyServer(function(input, output) {
                                                              ))))
   
   filteredData <- observeEvent(input$go, {
-    x <- subset(tracts_frame, State == input$States &
+    x <- subset(combined_city_metrics, State == input$States &
                         City == input$Cities &
                         Category == input$Categories &
-                        Short_Question_Text == input$Measures)
+                        Measure == input$Measures)
     
     leafletProxy("map") %>% 
       clearPopups() %>% 
@@ -44,7 +44,7 @@ shinyServer(function(input, output) {
     
     output$table <- renderDataTable({
       cities_frame_table <- x %>% 
-        select(State, City, TractFIPS, Year, Category, Short_Question_Text, `Crude prevalence`)
+        select(State, City, Year, Category, Measure, Performance)
       },rownames = FALSE, extensions = 'Buttons', options = list(dom = 'Bfrtip',
                                                                  buttons = list('copy', 'print', list(
                                                                    extend = 'collection',

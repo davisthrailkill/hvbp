@@ -5,7 +5,7 @@ shinyUI(
     
     dashboardSidebar(
       sidebarMenu(
-        menuItem("Interactive Map", tabName = "map", icon = icon("dashboard")),
+        menuItem("Interactive Map", tabName = "map", icon = icon("map-marked")),
         selectInput("States", "States", choices = states),
         uiOutput("cityselection"),
         #selectInput("Cities", "Cities", choices = cities),
@@ -13,7 +13,8 @@ shinyUI(
         uiOutput("measureselection"),
         actionButton("go", "Go"),
         downloadButton("download", "Download"),
-        menuItem("Dashboard", tabName = "dashboard", icon = icon("th"))
+        menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
+        menuItem("Data", tabName = "data", icon = icon("database"))
         )
     ),
     
@@ -30,10 +31,11 @@ shinyUI(
                   dataTableOutput("table"),
                   height = "100%",
                   width = "100%"
-                )
-                ),
+                )),
         tabItem(tabName = "dashboard",
-                h2("Dashboard"))
+                h2("Dashboard")),
+        tabItem(tabName = "data",
+                h2("Data"))
       )
       #tags$style(type = "text/css", "#map {height: calc(100vh - 80px) !important;}"),
       #leafletOutput("map")

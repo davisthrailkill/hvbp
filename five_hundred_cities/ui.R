@@ -11,12 +11,14 @@ shinyUI(
         #selectInput("Cities", "Cities", choices = cities),
         selectInput("Categories", "Category", choices = categories),
         uiOutput("measureselection"),
+        radioButtons("radio", "City vs. Census Tract", choices = c("City", "Census Tract")),
         actionButton("go", "Go"),
         downloadButton("download", "Download"),
         menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
         menuItem("Data", tabName = "data", icon = icon("database"))
         )
     ),
+    
     
     dashboardBody(
       tabItems(

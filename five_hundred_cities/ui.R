@@ -6,12 +6,11 @@ shinyUI(
     dashboardSidebar(
       sidebarMenu(
         menuItem("Interactive Map", tabName = "map", icon = icon("map-marked")),
+        radioButtons("radio", "City vs. Census Tract", choices = c("City", "Census Tract")),
         selectInput("States", "States", choices = states),
         uiOutput("cityselection"),
-        #selectInput("Cities", "Cities", choices = cities),
         selectInput("Categories", "Category", choices = categories),
         uiOutput("measureselection"),
-        radioButtons("radio", "City vs. Census Tract", choices = c("City", "Census Tract")),
         actionButton("go", "Go"),
         downloadButton("download", "Download"),
         menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),

@@ -3,6 +3,8 @@ library(leaflet)
 library(shinydashboard)
 library(DT)
 library(rgdal)
+library(sf)
+library(plotly)
 
 cities_frame <- readRDS("../data/cities_df.rds")
 cities_geo <- readRDS("../data/cities_geo.rds")
@@ -11,6 +13,8 @@ tracts_geo <- readRDS("../data/tracts_geo.rds")
 tracts_shapes <- readOGR("../data/500Cities_Boundaries/CityBoundaries.shp")
 combined_city_metrics <- readRDS("../data/combined_city_metrics.rds")
 combined_tract_metrics <- readRDS("../data/tracts_metrics.rds")
+
+tracts<-spTransform(tracts_shapes, CRS("+init=epsg:4326"))
 
 states <- as.data.frame(combined_city_metrics) %>% 
   select(State) %>% 

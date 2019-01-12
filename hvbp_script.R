@@ -302,13 +302,13 @@ chdb_city_socecon_v2 <- chdb_city_socecon %>%
 chdb_city_socecon_v3 <- chdb_city_socecon_v2 %>% 
   rename(Year = data_yr_type, City = city_name, CityFIPS = stpl_fips,
            GeographicLevel = geo_level, Category = category, Measure = metric_name,
-           Performance = est, Population = Population2010)
+           Estimate = est, Population = Population2010)
 
 # need to select only relevant columns from cities_chdb_df, then bind_rows with socecon_v2
 cities_chdb_df_v2 <- cities_chdb_df %>%
   select(Year, StateAbbr, State, City, CityFIPS, GeographicLevel, Category, Short_Question_Text,
          `Crude prevalence`, Population2010, GeoLocation, Lat, Long) %>% 
-  rename(Measure = Short_Question_Text, Performance = `Crude prevalence`, Population = Population2010)
+  rename(Measure = Short_Question_Text, Estimate = `Crude prevalence`, Population = Population2010)
 
 # convert Year to factor in cities_chdb_df_v2 in order to bind
 cities_chdb_df_v2$Year <- as.factor(as.character(cities_chdb_df_v2$Year))
@@ -325,12 +325,55 @@ combined_metrics_df$Measure <- as.factor(combined_metrics_df$Measure)
 saveRDS(combined_metrics_df, "data/combined_city_metrics.rds")
 
 
+
 chdb_tract_geo <- chdb_tract %>% 
   left_join(tract_geography, by = c("city_name" = "City", "stcotr_fips" = "TractFIPS")) %>% 
   distinct()
 
 chdb_tract_socecon <- chdb_tract_geo %>% 
   filter(category == "Social and Economic Factors" & group_name == "total population")
+
+tracts_chdb <- unique(chdb_tract_socecon$stcotr_fips)
+tracts_chdb_df <- tracts_df %>% 
+  filter(TractFIPS %in% tracts_chdb)
+
+#tract_pops <- tracts_chdb_df %>% 
+  #select(TractFIPS, Population2010) %>% 
+  #distinct()
+
+chdb_tract_socecon <- chdb_tract_socecon %>% 
+  left_join(tract_pops, by = c("stcotr_fips" = "TractFIPS"))
+
+chdb_tract_socecon_v2 <- chdb_tract_socecon %>% 
+  select(data_yr_type, StateAbbr, State, city_name, stcotr_fips, geo_level, category, metric_name,
+         est, denom, GeoLocation, Lat, Long)
+
+chdb_tract_socecon_v3 <- chdb_tract_socecon_v2 %>% 
+  rename(Year = data_yr_type, City = city_name, TractFIPS = stcotr_fips,
+          GeographicLevel = geo_level, Category = category, Measure = metric_name,
+          Estimate = est, Population = denom)
+
+tracts_chdb_df_v2 <- tracts_chdb_df %>%
+  select(Year, StateAbbr, State, City, TractFIPS, GeographicLevel, Category, Short_Question_Text,
+         `Crude prevalence`, Population2010, GeoLocation, Lat, Long) %>% 
+  rename(Measure = Short_Question_Text, Estimate = `Crude prevalence`, Population = Population2010)
+
+# convert Year to factor in cities_chdb_df_v2 in order to bind
+tracts_chdb_df_v2$Year <- as.factor(as.character(tracts_chdb_df_v2$Year))
+
+# bind rows cities_chdb_df_v2 and chdb_city_socecon_v3
+tracts_metrics_df <- bind_rows(tracts_chdb_df_v2, chdb_tract_socecon_v3)
+
+# clean character columns to factors
+tracts_metrics_df$City <- as.factor(tracts_metrics_df$City)
+tracts_metrics_df$Category <- as.factor(tracts_metrics_df$Category)
+tracts_metrics_df$Measure <- as.factor(tracts_metrics_df$Measure)
+
+# save combined metrics (cities) into rds file
+saveRDS(tracts_metrics_df, "data/tracts_metrics.rds")
+
+
+
 
 # joining chdb tract data with zip codes
 chdb_tract_geo_v2 <- chdb_tract_geo %>% 

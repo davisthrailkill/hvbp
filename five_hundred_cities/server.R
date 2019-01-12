@@ -23,7 +23,7 @@ shinyServer(function(input, output) {
   
   output$table <- renderDataTable({
     cities_frame_table <- combined_city_metrics %>% 
-      select(State, City, Year, Category, Measure, Performance)
+      select(State, City, Year, Category, Measure, Estimate)
   },rownames = FALSE, extensions = 'Buttons', options = list(dom = 'Bfrtip',
                                                              buttons = list('copy', 'print', list(
                                                                extend = 'collection',
@@ -34,49 +34,49 @@ shinyServer(function(input, output) {
   
     filteredData <- observeEvent(input$go, {
       if(input$radio == "City"){
-      x <- subset(combined_city_metrics, State == input$States &
-                    City == input$Cities &
-                    Category == input$Categories &
-                    Measure == input$Measures)
+        x <- subset(combined_city_metrics, State == input$States &
+                      City == input$Cities &
+                      Category == input$Categories &
+                      Measure == input$Measures)
       
-      leafletProxy("map") %>% 
-        clearPopups() %>% 
-        clearMarkers() %>% 
-        addCircleMarkers(data = x, ~Long, ~Lat, layerId = ~City)
+        leafletProxy("map") %>% 
+          clearPopups() %>% 
+          clearMarkers() %>% 
+          addCircleMarkers(data = x, ~Long, ~Lat, layerId = ~City)
       
-      output$table <- renderDataTable({
-        cities_frame_table <- x %>% 
-          select(State, City, Year, Category, Measure, Performance)
-      },rownames = FALSE, extensions = 'Buttons', options = list(dom = 'Bfrtip',
+        output$table <- renderDataTable({
+          cities_frame_table <- x %>% 
+            select(State, City, Year, Category, Measure, Estimate)
+        },rownames = FALSE, extensions = 'Buttons', options = list(dom = 'Bfrtip',
                                                                  buttons = list('copy', 'print', list(
                                                                    extend = 'collection',
                                                                    buttons = c('csv', 'excel', 'pdf'),
                                                                    text = 'Download'
                                                                  ))))
       
-      observe({
-        click <- input$map_marker_click
-        if (is.null(click))
-          return()
+        observe({
+          click <- input$map_marker_click
+            if (is.null(click))
+              return()
         
-        text <-
-          paste(click$id)
+          text <-
+            paste(click$id)
         
-        leafletProxy(mapId = "map") %>%
-          clearPopups() %>%
-          addPopups(data = click, lat = ~lat, lng = ~lng, popup = text) %>% 
-          setView(lng = click$lng, lat = click$lat, zoom = 6)
-      })
+          leafletProxy(mapId = "map") %>%
+            clearPopups() %>%
+            addPopups(data = click, lat = ~lat, lng = ~lng, popup = text) %>% 
+            setView(lng = click$lng, lat = click$lat, zoom = 6)
+        })
       
-      output$download <- downloadHandler(
-        filename = function(){
-          paste("data_", Sys.Date(), ".csv", sep = "")
-        }, content = function(file){
-          write.csv(x, file)
+        output$download <- downloadHandler(
+          filename = function(){
+            paste("data_", Sys.Date(), ".csv", sep = "")
+          }, content = function(file){
+            write.csv(x, file)
+          }
+        )
         }
-      )
-      }
-      x <- subset(combined_city_metrics, State == input$States &
+      x <- subset(combined_tract_metrics, State == input$States &
                     City == input$Cities &
                     Category == input$Categories &
                     Measure == input$Measures)
@@ -87,8 +87,8 @@ shinyServer(function(input, output) {
         addCircleMarkers(data = x, ~Long, ~Lat, layerId = ~City)
       
       output$table <- renderDataTable({
-        cities_frame_table <- x %>% 
-          select(State, City, Year, Category, Measure, Performance)
+        tracts_frame_table <- x %>% 
+          select(State, City, TractFIPS, Year, Category, Measure, Estimate)
       },rownames = FALSE, extensions = 'Buttons', options = list(dom = 'Bfrtip',
                                                                  buttons = list('copy', 'print', list(
                                                                    extend = 'collection',

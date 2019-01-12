@@ -10,6 +10,7 @@ tracts_frame <- readRDS("../data/tracts_df.rds")
 tracts_geo <- readRDS("../data/tracts_geo.rds")
 tracts_shapes <- readOGR("../data/500Cities_Boundaries/CityBoundaries.shp")
 combined_city_metrics <- readRDS("../data/combined_city_metrics.rds")
+combined_tract_metrics <- readRDS("../data/tracts_metrics.rds")
 
 states <- as.data.frame(combined_city_metrics) %>% 
   select(State) %>% 

@@ -14,25 +14,25 @@ shinyServer(function(input, output) {
     selectInput("Measures", "Measures", choices = unique(measures_available))
   })
   
-  output$map <- renderLeaflet({
-    leaflet() %>%
-      addTiles() %>%
-      addCircleMarkers(data = cities_geo, ~Long, ~Lat) %>%
-      setView(-98.5795, 39.8283, zoom = 4)
-  })
-  # output$map <- renderPlotly({
-  #   g <- list(
-  #     scope = 'usa',
-  #     projection = list(type = 'albers usa'),
-  #     lakecolor = toRGB('white')
-  #   )
-  #   
-  #   p <- plot_geo(data = cities_geo, lat = ~Lat, lon = ~Long) %>%
-  #     add_markers(
-  #       text = ~paste(City)
-  #     ) %>% 
-  #     layout(geo = g)
+  # output$map <- renderLeaflet({
+  #   leaflet() %>%
+  #     addTiles() %>%
+  #     addCircleMarkers(data = cities_geo, ~Long, ~Lat) %>%
+  #     setView(-98.5795, 39.8283, zoom = 4)
   # })
+  output$map <- renderPlotly({
+    g <- list(
+      scope = 'usa',
+      projection = list(type = 'albers usa'),
+      lakecolor = toRGB('white')
+    )
+
+    p <- plot_geo(data = cities_geo, lat = ~Lat, lon = ~Long) %>%
+      add_markers(
+        text = ~paste(City)
+      ) %>%
+      layout(geo = g)
+  })
   
   output$table <- renderDataTable({
     cities_frame_table <- combined_city_metrics %>% 
@@ -52,10 +52,14 @@ shinyServer(function(input, output) {
                     Category == input$Categories &
                     Measure == input$Measures)
     
-      leafletProxy("map") %>% 
-        clearPopups() %>% 
-        clearMarkers() %>% 
-        addCircleMarkers(data = x, ~Long, ~Lat, layerId = ~City)
+      plotlyOutput("map") %>% 
+        #clearPopups() %>% 
+        #clearMarkers() %>% 
+        #addCircleMarkers(data = x, ~Long, ~Lat, layerId = ~City)
+        plot_geo(data = x, lat = ~Lat, lon = ~Long) %>% 
+        add_markers(
+          text = ~paste(City)
+        )
     
       output$table <- renderDataTable({
         cities_frame_table <- x %>% 
@@ -95,16 +99,22 @@ shinyServer(function(input, output) {
                   Measure == input$Measures)
     
     
+    plotlyOutput("map") %>% 
+      plot_geo(data = x, lat = ~Lat, lon = ~Long) %>% 
+      add_markers(
+        text = ~paste(City)
+      )
+    
     # pal <- colorQuantile("YlGn", x$Estimate)
     
-    leafletProxy("map") %>% 
-      clearPopups() %>% 
-      clearMarkers() %>% 
-      # addPolygons(data = x, ~Long, ~Lat, fillColor = pal(x$Estimate), 
-      #             fillOpacity = 0.8, 
-      #             color = "#BDBDC3", 
-      #             weight = 2)
-      addCircleMarkers(data = x, ~Long, ~Lat, layerId = ~City)
+    # leafletProxy("map") %>% 
+    #   clearPopups() %>% 
+    #   clearMarkers() %>% 
+    #   # addPolygons(data = x, ~Long, ~Lat, fillColor = pal(x$Estimate), 
+    #   #             fillOpacity = 0.8, 
+    #   #             color = "#BDBDC3", 
+    #   #             weight = 2)
+    #   addCircleMarkers(data = x, ~Long, ~Lat, layerId = ~City)
     
     output$table <- renderDataTable({
       tracts_frame_table <- x %>% 

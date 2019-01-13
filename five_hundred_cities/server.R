@@ -14,12 +14,12 @@ shinyServer(function(input, output) {
     selectInput("Measures", "Measures", choices = unique(measures_available))
   })
   
-  output$tractselection <- renderUI({
-    tracts_available <- combined_tract_metrics[combined_tract_metrics$City == input$Cities,
-                                               "FIPS"]
-    
-    selectInput("Tracts", "Census Tract", choices = unique(tracts_available))
-  })
+  # output$tractselection <- renderUI({
+  #   tracts_available <- combined_tract_metrics[combined_tract_metrics$City == input$Cities,
+  #                                              "FIPS"]
+  #   
+  #   selectInput("Tracts", "Census Tract", choices = unique(tracts_available))
+  # })
   
   output$estimate <- renderValueBox({
     valueBox(formatC(combined_tract_metrics$Estimate, digits = 1, format = "f"),
@@ -80,16 +80,16 @@ shinyServer(function(input, output) {
       x <- subset(geo_level(),
                   State == input$States &
                     City == input$Cities &
-                    #FIPS == input$Tracts &
+                    # FIPS == input$Tracts &
                     Category == input$Categories &
                     Measure == input$Measures)
       
-      y <- subset(combined_tract_metrics,
-                  State == input$States &
-                    City == input$Cities &
-                    FIPS == input$Tracts &
-                    Category == input$Categories &
-                    Measure == input$Measures)
+      # y <- subset(combined_tract_metrics,
+      #             State == input$States &
+      #               City == input$Cities &
+      #               FIPS == input$Tracts &
+      #               Category == input$Categories &
+      #               Measure == input$Measures)
       
       # y <- subset(combined_tract_metrics,
       #             State == input$States &
@@ -102,12 +102,12 @@ shinyServer(function(input, output) {
       #             City == input$Cities)
       
       output$estimate <- renderValueBox({
-        valueBox(formatC(y$Estimate, digits = 1, format = "f"),
+        valueBox(formatC(x$Estimate, digits = 1, format = "f"),
                  subtitle = "Estimate")
       })
 
       output$population <- renderValueBox({
-        valueBox(formatC(y$Population, digits = 0, format = "f"),
+        valueBox(formatC(x$Population, digits = 0, format = "f"),
                  subtitle = "Population")
       })
     
@@ -122,12 +122,12 @@ shinyServer(function(input, output) {
       
       output$maptable <- renderDataTable({
         cities_frame_table <- x %>% 
-          select(Year, Estimate, Population)
+          select(Year, FIPS, Estimate, Population)
       }, rownames = FALSE)
     
       output$table <- renderDataTable({
         cities_frame_table <- x %>% 
-          select(State, City, Year, Category, Measure, Estimate)
+          select(State, City, FIPS, Year, Category, Measure, Estimate)
       },rownames = FALSE, extensions = 'Buttons', options = list(dom = 'Bfrtip',
                                                                buttons = list('copy', 'print', list(
                                                                  extend = 'collection',

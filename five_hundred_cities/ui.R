@@ -12,10 +12,10 @@ shinyUI(
                      choices = c("City" = "City", "Census Tract" = "Census Tract")),
         selectInput("States", "States", choices = states),
         uiOutput("cityselection"),
-        conditionalPanel(
-          condition = "input.geo == 'Census Tract'",
-          uiOutput("tractselection")
-        ),
+        # conditionalPanel(
+        #   condition = "input.geo == 'Census Tract'",
+        #   uiOutput("tractselection")
+        # ),
         selectInput("Categories", "Category", choices = categories),
         uiOutput("measureselection"),
         actionButton("go", "Go"),

@@ -14,25 +14,35 @@ shinyServer(function(input, output) {
     selectInput("Measures", "Measures", choices = unique(measures_available))
   })
   
-  # output$map <- renderLeaflet({
-  #   leaflet() %>%
-  #     addTiles() %>%
-  #     addCircleMarkers(data = cities_geo, ~Long, ~Lat) %>%
-  #     setView(-98.5795, 39.8283, zoom = 4)
-  # })
-  output$map <- renderPlotly({
-    g <- list(
-      scope = 'usa',
-      projection = list(type = 'albers usa'),
-      lakecolor = toRGB('white')
-    )
-
-    p <- plot_geo(data = cities_geo, lat = ~Lat, lon = ~Long) %>%
-      add_markers(
-        text = ~paste(City)
-      ) %>%
-      layout(geo = g)
+  output$estimate <- renderValueBox({
+    valueBox(formatC(combined_city_metrics$Estimate, digits = 1, format = "f"),
+             subtitle = "Estimate")
   })
+  
+  output$population <- renderValueBox({
+    valueBox(formatC(combined_city_metrics$Population, digits = 0, format = "f"),
+             subtitle = "Population")
+  })
+  
+  output$map <- renderLeaflet({
+    leaflet() %>%
+      addTiles() %>%
+      addCircleMarkers(data = cities_geo, ~Long, ~Lat) %>%
+      setView(-98.5795, 39.8283, zoom = 4)
+  })
+  # output$map <- renderPlotly({
+  #   g <- list(
+  #     scope = 'usa',
+  #     projection = list(type = 'albers usa'),
+  #     lakecolor = toRGB('white')
+  #     )
+  # 
+  #   p <- plot_geo(data = cities_geo, lat = ~Lat, lon = ~Long) %>%
+  #     add_markers(
+  #       text = ~paste(City)
+  #       ) %>%
+  #     layout(geo = g)
+  # })
   
   output$table <- renderDataTable({
     cities_frame_table <- combined_city_metrics %>% 
@@ -51,15 +61,25 @@ shinyServer(function(input, output) {
                     City == input$Cities &
                     Category == input$Categories &
                     Measure == input$Measures)
+      
+      output$estimate <- renderValueBox({
+        valueBox(formatC(x$Estimate, digits = 1, format = "f"),
+                 subtitle = "Estimate")
+      })
+      
+      output$population <- renderValueBox({
+        valueBox(formatC(x$Population, digits = 0, format = "f"),
+                 subtitle = "Population")
+      })
     
-      plotlyOutput("map") %>% 
-        #clearPopups() %>% 
-        #clearMarkers() %>% 
-        #addCircleMarkers(data = x, ~Long, ~Lat, layerId = ~City)
-        plot_geo(data = x, lat = ~Lat, lon = ~Long) %>% 
-        add_markers(
-          text = ~paste(City)
-        )
+      leafletProxy("map") %>% 
+        clearPopups() %>%
+        clearMarkers() %>%
+        addCircleMarkers(data = x, ~Long, ~Lat, layerId = ~City)
+        # plot_geo(data = x, lat = ~Lat, lon = ~Long) %>% 
+        # add_markers(
+        #   text = ~paste(City)
+        # )
     
       output$table <- renderDataTable({
         cities_frame_table <- x %>% 
@@ -98,23 +118,31 @@ shinyServer(function(input, output) {
                   Category == input$Categories &
                   Measure == input$Measures)
     
+    output$estimate <- renderValueBox({
+      valueBox(formatC(x$Estimate, digits = 1, format = "f"),
+               subtitle = "Estimate")
+    })
     
-    plotlyOutput("map") %>% 
-      plot_geo(data = x, lat = ~Lat, lon = ~Long) %>% 
-      add_markers(
-        text = ~paste(City)
-      )
+    output$population <- renderValueBox({
+      valueBox(formatC(x$Population, digits = 0, format = "f"),
+               subtitle = "Population")
+    })
     
-    # pal <- colorQuantile("YlGn", x$Estimate)
     
-    # leafletProxy("map") %>% 
-    #   clearPopups() %>% 
-    #   clearMarkers() %>% 
-    #   # addPolygons(data = x, ~Long, ~Lat, fillColor = pal(x$Estimate), 
-    #   #             fillOpacity = 0.8, 
-    #   #             color = "#BDBDC3", 
-    #   #             weight = 2)
-    #   addCircleMarkers(data = x, ~Long, ~Lat, layerId = ~City)
+    # plotlyOutput("map") %>% 
+    #   plot_geo(data = x, lat = ~Lat, lon = ~Long) %>% 
+    #   add_markers(
+    #     text = ~paste(City)
+    #   )
+    
+    leafletProxy("map") %>%
+      clearPopups() %>%
+      clearMarkers() %>%
+      # addPolygons(data = x, ~Long, ~Lat, fillColor = pal(x$Estimate),
+      #             fillOpacity = 0.8,
+      #             color = "#BDBDC3",
+      #             weight = 2)
+      addCircleMarkers(data = x, ~Long, ~Lat, layerId = ~City)
     
     output$table <- renderDataTable({
       tracts_frame_table <- x %>% 

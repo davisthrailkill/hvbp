@@ -6,15 +6,15 @@ shinyUI(
     dashboardSidebar(
       sidebarMenu(
         menuItem("Interactive Map", tabName = "map", icon = icon("map-marked")),
-        # radioButtons("radio", "City vs. Census Tract", choices = c("City", "Census Tract")),
-        # selectInput("States", "States", choices = states),
-        # uiOutput("cityselection"),
-        # selectInput("Categories", "Category", choices = categories),
-        # uiOutput("measureselection"),
-        # actionButton("go", "Go"),
-        downloadButton("download", "Download"),
         menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
-        menuItem("Data", tabName = "data", icon = icon("database"))
+        menuItem("Data", tabName = "data", icon = icon("database")),
+        radioButtons("radio", "City vs. Census Tract", choices = c("City", "Census Tract")),
+        selectInput("States", "States", choices = states),
+        uiOutput("cityselection"),
+        selectInput("Categories", "Category", choices = categories),
+        uiOutput("measureselection"),
+        actionButton("go", "Go"),
+        downloadButton("download", "Download")
         )
     ),
     
@@ -23,27 +23,31 @@ shinyUI(
       tabItems(
         tabItem(tabName = "map", 
                 #h2("Interactive Map"),
-                column(
-                  width = 3,
-                  box(
-                    status = "primary",
-                    title = "Inputs",
-                    width = NULL,
-                    radioButtons("radio", "City vs. Census Tract", choices = c("City", "Census Tract")),
-                    selectInput("States", "States", choices = states),
-                    uiOutput("cityselection"),
-                    selectInput("Categories", "Category", choices = categories),
-                    uiOutput("measureselection"),
-                    actionButton("go", "Go")
-                  )
+                # column(
+                #   width = 3,
+                #   box(
+                #     status = "primary",
+                #     title = "Inputs",
+                #     width = NULL,
+                #     radioButtons("radio", "City vs. Census Tract", choices = c("City", "Census Tract")),
+                #     selectInput("States", "States", choices = states),
+                #     uiOutput("cityselection"),
+                #     selectInput("Categories", "Category", choices = categories),
+                #     uiOutput("measureselection"),
+                #     actionButton("go", "Go")
+                #   )
+                # ),
+                fluidRow(
+                  valueBoxOutput("estimate"),
+                  valueBoxOutput("population")
                 ),
                 column(
-                  width = 9,
+                  width = 12,
                   box(
                     status = "primary",
                     width = NULL,
-                    #leafletOutput("map", height = 500)
-                    plotlyOutput("map", height = 500)
+                    leafletOutput("map", height = 500)
+                    #plotlyOutput("map", height = 500)
                   )
                 )
                 

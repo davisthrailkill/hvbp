@@ -321,9 +321,8 @@ combined_metrics_df$City <- as.factor(combined_metrics_df$City)
 combined_metrics_df$Category <- as.factor(combined_metrics_df$Category)
 combined_metrics_df$Measure <- as.factor(combined_metrics_df$Measure)
 
-# save combined metrics (cities) into rds file
-saveRDS(combined_metrics_df, "data/combined_city_metrics.rds")
-
+combined_citymetrics_df <- combined_metrics_df %>% 
+  rename(FIPS = CityFIPS)
 
 
 chdb_tract_geo <- chdb_tract %>% 
@@ -369,6 +368,29 @@ tracts_metrics_df$City <- as.factor(tracts_metrics_df$City)
 tracts_metrics_df$Category <- as.factor(tracts_metrics_df$Category)
 tracts_metrics_df$Measure <- as.factor(tracts_metrics_df$Measure)
 
+combined_tractmetrics_df <- tracts_metrics_df %>% 
+  rename(FIPS = TractFIPS)
+
+
+# bind rows - cities and tracts into one
+combined_citytracts <- bind_rows(combined_citymetrics_df, combined_tractmetrics_df)
+
+# change city, geographic level, and measure into factor
+combined_citytracts$City <- as.factor(combined_citytracts$City)
+combined_citytracts$GeographicLevel <- as.factor(combined_citytracts$GeographicLevel)
+combined_citytracts$Measure <- as.factor(combined_citytracts$Measure)
+
+combined_citytracts$GeographicLevel[combined_citytracts$GeographicLevel == "city"] <- "City"
+combined_citytracts$GeographicLevel[combined_citytracts$GeographicLevel == "tract"] <- "Census Tract"
+
+
+# save final combined into an RDS file
+saveRDS(combined_citytracts, "data/combined_citytracts.rds")
+
+
+# save combined metrics (cities) into rds file
+saveRDS(combined_metrics_df, "data/combined_city_metrics.rds")
+
 # save combined metrics (cities) into rds file
 saveRDS(tracts_metrics_df, "data/tracts_metrics.rds")
 
@@ -376,5 +398,5 @@ saveRDS(tracts_metrics_df, "data/tracts_metrics.rds")
 
 
 # joining chdb tract data with zip codes
-chdb_tract_geo_v2 <- chdb_tract_geo %>% 
-  left_join(tract_zip, by = c("stcotr_fips" = "tract"))
+#chdb_tract_geo_v2 <- chdb_tract_geo %>% 
+  #left_join(tract_zip, by = c("stcotr_fips" = "tract"))

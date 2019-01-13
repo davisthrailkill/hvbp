@@ -13,19 +13,30 @@ tracts_geo <- readRDS("../data/tracts_geo.rds")
 tracts_shapes <- readOGR("../data/500Cities_Boundaries/CityBoundaries.shp")
 combined_city_metrics <- readRDS("../data/combined_city_metrics.rds")
 combined_tract_metrics <- readRDS("../data/tracts_metrics.rds")
+combined_citytract <- readRDS("../data/combined_citytracts.rds")
 
 tracts<-spTransform(tracts_shapes, CRS("+init=epsg:4326"))
 
-states <- as.data.frame(combined_city_metrics) %>% 
+states <- as.data.frame(combined_tract_metrics) %>% 
   select(State) %>% 
   unique()
 
-cities <- as.data.frame(combined_city_metrics) %>% 
+cities <- as.data.frame(combined_tract_metrics) %>% 
   select(City) %>% 
   unique()
 
-categories <- as.data.frame(combined_city_metrics) %>% 
+categories <- as.data.frame(combined_tract_metrics) %>% 
   select(Category) %>% 
+  unique()
+
+in_msrs <- as.data.frame(combined_tract_metrics) %>% 
+  filter(Category != "Health Outcomes") %>% 
+  select(Measure) %>% 
+  unique()
+
+out_msrs <- as.data.frame(combined_tract_metrics) %>% 
+  filter(Category == "Health Outcomes") %>% 
+  select(Measure) %>% 
   unique()
 
 # prevention_measures <- as.data.frame(cities_frame) %>% 

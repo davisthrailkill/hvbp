@@ -8,8 +8,7 @@ shinyUI(
         menuItem("Interactive Map", tabName = "map", icon = icon("map-marked")),
         menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
         menuItem("Data", tabName = "data", icon = icon("database")),
-        radioButtons("radio", "City vs. Census Tract", choices = c("City", "Census Tract"),
-                     inline = TRUE),
+        #selectInput("geo", "Geographic Level", choices = c("City", "Census Tract")),
         selectInput("States", "States", choices = states),
         uiOutput("cityselection"),
         selectInput("Categories", "Category", choices = categories),
@@ -43,7 +42,15 @@ shinyUI(
                   valueBoxOutput("population")
                 ),
                 column(
-                  width = 12,
+                  width = 5,
+                  box(
+                    status = "primary",
+                    width = NULL,
+                    dataTableOutput('maptable')
+                  )
+                ),
+                column(
+                  width = 7,
                   box(
                     status = "primary",
                     width = NULL,
@@ -59,7 +66,24 @@ shinyUI(
                 # )),
         ),
         tabItem(tabName = "dashboard",
-                h2("Dashboard")),
+                h2("Dashboard"),
+                column(
+                  width = 4,
+                  box(
+                    status = "primary",
+                    width = NULL,
+                    selectInput("in_msr", "Input Measure", choices = in_msrs),
+                    selectInput("out_msr", "Outcome Measure", choices = out_msrs)
+                  )
+                ),
+                column(
+                  width = 8,
+                  box(
+                    status = "primary",
+                    width = NULL,
+                    plotOutput("scatter")
+                  )
+                )),
         tabItem(tabName = "data",
                 h2("Data"),
                 box(

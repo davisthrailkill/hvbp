@@ -59,24 +59,32 @@ shinyServer(function(input, output) {
                                                                text = 'Download'
                                                              ))))
   
+  geo_level <- reactive({
+    if(input$geo == "City"){
+      data <- combined_city_metrics
+    } else if(input$geo == "Census Tract"){
+      data <- combined_tract_metrics
+    }
+  })
+  
   
   filteredData <- observeEvent(input$go, {
     # if(input$radio == "City"){
-      x <- subset(combined_city_metrics,
+      x <- subset(geo_level(),
                   State == input$States &
                     City == input$Cities &
                     Category == input$Categories &
                     Measure == input$Measures)
       
-      y <- subset(combined_tract_metrics,
-                  State == input$States &
-                    City == input$Cities &
-                    Category == input$Categories &
-                    Measure == input$Measures)
-      
-      z <- subset(combined_tract_metrics,
-                  State == input$States,
-                  City == input$Cities)
+      # y <- subset(combined_tract_metrics,
+      #             State == input$States &
+      #               City == input$Cities &
+      #               Category == input$Categories &
+      #               Measure == input$Measures)
+      # 
+      # z <- subset(combined_tract_metrics,
+      #             State == input$States,
+      #             City == input$Cities)
       
       output$estimate <- renderValueBox({
         valueBox(formatC(x$Estimate, digits = 1, format = "f"),
@@ -98,13 +106,13 @@ shinyServer(function(input, output) {
         # )
       
       output$maptable <- renderDataTable({
-        cities_frame_table <- y %>% 
-          select(TractFIPS, Estimate, Population)
+        cities_frame_table <- x %>% 
+          select(Estimate, Population)
       }, rownames = FALSE)
     
       output$table <- renderDataTable({
-        cities_frame_table <- y %>% 
-          select(State, City, TractFIPS, Year, Category, Measure, Estimate)
+        cities_frame_table <- x %>% 
+          select(State, City, Year, Category, Measure, Estimate)
       },rownames = FALSE, extensions = 'Buttons', options = list(dom = 'Bfrtip',
                                                                buttons = list('copy', 'print', list(
                                                                  extend = 'collection',
@@ -126,16 +134,16 @@ shinyServer(function(input, output) {
           setView(lng = click$lng, lat = click$lat, zoom = 6)
       })
       
-      output$scatter <- renderPlot({
-        ggplot(z, aes(x = z$Measure == input$in_msr, y = z$Measure == input$out_msr)) +
-          geom_point()
-      })
+      # output$scatter <- renderPlot({
+      #   ggplot(z, aes(x = x$Measure == input$in_msr, y = z$Measure == input$out_msr)) +
+      #     geom_point()
+      # })
     
       output$download <- downloadHandler(
         filename = function(){
           paste("data_", Sys.Date(), ".csv", sep = "")
         }, content = function(file){
-          write.csv(y, file)
+          write.csv(x, file)
         }
       )
       })

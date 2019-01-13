@@ -1,4 +1,4 @@
-# Define UI for application that draws a histogram
+# Define UI for application
 shinyUI(
   dashboardPage(
     dashboardHeader(title = "500 Cities"),
@@ -12,6 +12,10 @@ shinyUI(
                      choices = c("City" = "City", "Census Tract" = "Census Tract")),
         selectInput("States", "States", choices = states),
         uiOutput("cityselection"),
+        conditionalPanel(
+          condition = "input.geo == 'Census Tract'",
+          uiOutput("tractselection")
+        ),
         selectInput("Categories", "Category", choices = categories),
         uiOutput("measureselection"),
         actionButton("go", "Go"),
@@ -38,10 +42,10 @@ shinyUI(
                 #     actionButton("go", "Go")
                 #   )
                 # ),
-                fluidRow(
-                  valueBoxOutput("estimate"),
-                  valueBoxOutput("population")
-                ),
+                # fluidRow(
+                #   valueBoxOutput("estimate"),
+                #   valueBoxOutput("population")
+                # ),
                 column(
                   width = 5,
                   box(
@@ -73,17 +77,20 @@ shinyUI(
                   box(
                     status = "primary",
                     width = NULL,
+                    # uiOutput("tractselection"),
                     selectInput("in_msr", "Input Measure", choices = in_msrs),
                     selectInput("out_msr", "Outcome Measure", choices = out_msrs)
                   )
                 ),
                 column(
                   width = 8,
-                  box(
-                    status = "primary",
-                    width = NULL,
-                    plotOutput("scatter")
-                  )
+                  # box(
+                  #   status = "primary",
+                  #   width = NULL,
+                  #   plotOutput("scatter")
+                  # )
+                  valueBoxOutput("estimate"),
+                  valueBoxOutput("population")
                 )),
         tabItem(tabName = "data",
                 h2("Data"),

@@ -321,6 +321,9 @@ combined_metrics_df$City <- as.factor(combined_metrics_df$City)
 combined_metrics_df$Category <- as.factor(combined_metrics_df$Category)
 combined_metrics_df$Measure <- as.factor(combined_metrics_df$Measure)
 
+combined_metrics_df <- combined_metrics_df %>% 
+  rename(FIPS = CityFIPS)
+
 combined_citymetrics_df <- combined_metrics_df %>% 
   rename(FIPS = CityFIPS)
 
@@ -367,6 +370,9 @@ tracts_metrics_df <- bind_rows(tracts_chdb_df_v2, chdb_tract_socecon_v3)
 tracts_metrics_df$City <- as.factor(tracts_metrics_df$City)
 tracts_metrics_df$Category <- as.factor(tracts_metrics_df$Category)
 tracts_metrics_df$Measure <- as.factor(tracts_metrics_df$Measure)
+
+tracts_metrics_df <- tracts_metrics_df %>% 
+  rename(FIPS = TractFIPS)
 
 combined_tractmetrics_df <- tracts_metrics_df %>% 
   rename(FIPS = TractFIPS)

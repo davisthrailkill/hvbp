@@ -339,26 +339,32 @@ tracts_chdb <- unique(chdb_tract_socecon$stcotr_fips)
 tracts_chdb_df <- tracts_df %>% 
   filter(TractFIPS %in% tracts_chdb)
 
-#tract_pops <- tracts_chdb_df %>% 
-  #select(TractFIPS, Population2010) %>% 
-  #distinct()
+# tract_pops <- tracts_chdb_df %>%
+#   select(TractFIPS, Population2010) %>%
+#   distinct()
+# 
+# chdb_tract_socecon <- chdb_tract_socecon %>% 
+#   left_join(tract_pops, by = c("stcotr_fips" = "TractFIPS"))
 
-chdb_tract_socecon <- chdb_tract_socecon %>% 
-  left_join(tract_pops, by = c("stcotr_fips" = "TractFIPS"))
+counties_lookup <- chdb_tract_socecon %>% 
+  select(county_name, stcotr_fips)
 
 chdb_tract_socecon_v2 <- chdb_tract_socecon %>% 
-  select(data_yr_type, StateAbbr, State, city_name, stcotr_fips, geo_level, category, metric_name,
+  select(data_yr_type, StateAbbr, State, city_name, county_name, stcotr_fips, geo_level, category, metric_name,
          est, denom, GeoLocation, Lat, Long)
 
 chdb_tract_socecon_v3 <- chdb_tract_socecon_v2 %>% 
-  rename(Year = data_yr_type, City = city_name, TractFIPS = stcotr_fips,
+  rename(Year = data_yr_type, City = city_name, County = county_name, TractFIPS = stcotr_fips,
           GeographicLevel = geo_level, Category = category, Measure = metric_name,
           Estimate = est, Population = denom)
 
+tracts_chdb_df <- tracts_chdb_df %>% 
+  left_join(counties_lookup, by = c("TractFIPS" = "stcotr_fips"))
+
 tracts_chdb_df_v2 <- tracts_chdb_df %>%
-  select(Year, StateAbbr, State, City, TractFIPS, GeographicLevel, Category, Short_Question_Text,
+  select(Year, StateAbbr, State, City, county_name, TractFIPS, GeographicLevel, Category, Short_Question_Text,
          `Crude prevalence`, Population2010, GeoLocation, Lat, Long) %>% 
-  rename(Measure = Short_Question_Text, Estimate = `Crude prevalence`, Population = Population2010)
+  rename(County = county_name, Measure = Short_Question_Text, Estimate = `Crude prevalence`, Population = Population2010)
 
 # convert Year to factor in cities_chdb_df_v2 in order to bind
 tracts_chdb_df_v2$Year <- as.factor(as.character(tracts_chdb_df_v2$Year))
@@ -370,6 +376,7 @@ tracts_metrics_df <- bind_rows(tracts_chdb_df_v2, chdb_tract_socecon_v3)
 tracts_metrics_df$City <- as.factor(tracts_metrics_df$City)
 tracts_metrics_df$Category <- as.factor(tracts_metrics_df$Category)
 tracts_metrics_df$Measure <- as.factor(tracts_metrics_df$Measure)
+tracts_metrics_df$County <- as.factor(tracts_metrics_df$County)
 
 tracts_metrics_df <- tracts_metrics_df %>% 
   rename(FIPS = TractFIPS)
@@ -379,7 +386,7 @@ combined_tractmetrics_df <- tracts_metrics_df %>%
 
 
 # bind rows - cities and tracts into one
-combined_citytracts <- bind_rows(combined_citymetrics_df, combined_tractmetrics_df)
+combined_citytracts <- bind_rows(combined_metrics_df, tracts_metrics_df)
 
 # change city, geographic level, and measure into factor
 combined_citytracts$City <- as.factor(combined_citytracts$City)

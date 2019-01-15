@@ -126,6 +126,7 @@ shinyServer(function(input, output) {
       # }, rownames = FALSE)
       
       output$barplot <- renderPlot({
+        
         ggplot(data = x, aes(x = reorder(factor(FIPS), -Estimate), y = Estimate)) +
           geom_bar(stat = "identity")
       })

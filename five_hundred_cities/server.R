@@ -21,15 +21,15 @@ shinyServer(function(input, output) {
   #   selectInput("Tracts", "Census Tract", choices = unique(tracts_available))
   # })
   
-  output$estimate <- renderValueBox({
-    valueBox(formatC(combined_tract_metrics$Estimate, digits = 1, format = "f"),
-             subtitle = "Estimate")
-  })
-  
-  output$population <- renderValueBox({
-    valueBox(formatC(combined_tract_metrics$Population, digits = 0, format = "f"),
-             subtitle = "Population")
-  })
+  # output$estimate <- renderValueBox({
+  #   valueBox(formatC(combined_tract_metrics$Estimate, digits = 1, format = "f"),
+  #            subtitle = "Estimate")
+  # })
+  # 
+  # output$population <- renderValueBox({
+  #   valueBox(formatC(combined_tract_metrics$Population, digits = 0, format = "f"),
+  #            subtitle = "Population")
+  # })
   
   output$map <- renderLeaflet({
     leaflet() %>%
@@ -51,10 +51,10 @@ shinyServer(function(input, output) {
   #     layout(geo = g)
   # })
   
-  output$maptable <- renderDataTable({
-    cities_frame_table <- combined_tract_metrics %>% 
-      select(FIPS, Year, Estimate, Population)
-  }, rownames = FALSE)
+  # output$maptable <- renderDataTable({
+  #   cities_frame_table <- combined_tract_metrics %>% 
+  #     select(FIPS, Year, Estimate, Population)
+  # }, rownames = FALSE)
   
   output$table <- renderDataTable({
     cities_frame_table <- combined_tract_metrics %>% 
@@ -101,15 +101,15 @@ shinyServer(function(input, output) {
       #             State == input$States,
       #             City == input$Cities)
       
-      output$estimate <- renderValueBox({
-        valueBox(formatC(x$Estimate, digits = 1, format = "f"),
-                 subtitle = "Estimate")
-      })
-
-      output$population <- renderValueBox({
-        valueBox(formatC(x$Population, digits = 0, format = "f"),
-                 subtitle = "Population")
-      })
+      # output$estimate <- renderValueBox({
+      #   valueBox(formatC(x$Estimate, digits = 1, format = "f"),
+      #            subtitle = "Estimate")
+      # })
+      # 
+      # output$population <- renderValueBox({
+      #   valueBox(formatC(x$Population, digits = 0, format = "f"),
+      #            subtitle = "Population")
+      # })
     
       leafletProxy("map") %>% 
         clearPopups() %>%
@@ -120,10 +120,15 @@ shinyServer(function(input, output) {
         #   text = ~paste(City)
         # )
       
-      output$maptable <- renderDataTable({
-        cities_frame_table <- x %>% 
-          select(Year, FIPS, Estimate, Population)
-      }, rownames = FALSE)
+      # output$maptable <- renderDataTable({
+      #   cities_frame_table <- x %>% 
+      #     select(Year, FIPS, Estimate, Population)
+      # }, rownames = FALSE)
+      
+      output$barplot <- renderPlot({
+        ggplot(data = x, aes(x = reorder(factor(FIPS), -Estimate), y = Estimate)) +
+          geom_bar(stat = "identity")
+      })
     
       output$table <- renderDataTable({
         cities_frame_table <- x %>% 

@@ -27,35 +27,8 @@ shinyUI(
     dashboardBody(
       tabItems(
         tabItem(tabName = "map", 
-                #h2("Interactive Map"),
-                # column(
-                #   width = 3,
-                #   box(
-                #     status = "primary",
-                #     title = "Inputs",
-                #     width = NULL,
-                #     radioButtons("radio", "City vs. Census Tract", choices = c("City", "Census Tract")),
-                #     selectInput("States", "States", choices = states),
-                #     uiOutput("cityselection"),
-                #     selectInput("Categories", "Category", choices = categories),
-                #     uiOutput("measureselection"),
-                #     actionButton("go", "Go")
-                #   )
-                # ),
-                # fluidRow(
-                #   valueBoxOutput("estimate"),
-                #   valueBoxOutput("population")
-                # ),
                 column(
-                  width = 5,
-                  box(
-                    status = "primary",
-                    width = NULL,
-                    dataTableOutput('maptable')
-                  )
-                ),
-                column(
-                  width = 7,
+                  width = 12,
                   box(
                     status = "primary",
                     width = NULL,
@@ -73,24 +46,12 @@ shinyUI(
         tabItem(tabName = "dashboard",
                 h2("Dashboard"),
                 column(
-                  width = 4,
+                  width = 8,
                   box(
                     status = "primary",
                     width = NULL,
-                    # uiOutput("tractselection"),
-                    selectInput("in_msr", "Input Measure", choices = in_msrs),
-                    selectInput("out_msr", "Outcome Measure", choices = out_msrs)
+                    plotOutput("barplot")
                   )
-                ),
-                column(
-                  width = 8,
-                  # box(
-                  #   status = "primary",
-                  #   width = NULL,
-                  #   plotOutput("scatter")
-                  # )
-                  valueBoxOutput("estimate"),
-                  valueBoxOutput("population")
                 )),
         tabItem(tabName = "data",
                 h2("Data"),

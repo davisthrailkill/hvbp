@@ -33,7 +33,7 @@ shinyUI(
                     status = "primary",
                     width = NULL,
                     leafletOutput("map", height = 500)
-                    #plotlyOutput("map", height = 500)
+                    # plotlyOutput("map", height = 500)
                   )
                 )
                 

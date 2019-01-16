@@ -32,10 +32,8 @@ shinyServer(function(input, output) {
   # })
   
   output$map <- renderLeaflet({
-    leaflet() %>%
-      addTiles() %>%
-      addCircleMarkers(data = cities_geo, ~Long, ~Lat) %>%
-      setView(-98.5795, 39.8283, zoom = 4)
+    map <- tm_shape(combined_city_metrics, projection = 2163) + tm_polygons()
+    tmap_leaflet(map)
   })
   # output$map <- renderPlotly({
   #   g <- list(
@@ -44,7 +42,7 @@ shinyServer(function(input, output) {
   #     lakecolor = toRGB('white')
   #     )
   # 
-  #   p <- plot_geo(data = cities_geo, lat = ~Lat, lon = ~Long) %>%
+  #   p <- plot_geo(data = cities_geo, x = ~Long, y = ~Lat) %>%
   #     add_markers(
   #       text = ~paste(City)
   #       ) %>%
@@ -58,7 +56,7 @@ shinyServer(function(input, output) {
   
   output$table <- renderDataTable({
     cities_frame_table <- combined_tract_metrics %>% 
-      select(State, City, FIPS, Year, Category, Measure, Estimate)
+      dplyr::select(State, City, Year, Category, Measure, Estimate)
   },rownames = FALSE, extensions = 'Buttons', options = list(dom = 'Bfrtip',
                                                              buttons = list('copy', 'print', list(
                                                                extend = 'collection',
@@ -84,23 +82,7 @@ shinyServer(function(input, output) {
                     Category == input$Categories &
                     Measure == input$Measures)
       
-      # y <- subset(combined_tract_metrics,
-      #             State == input$States &
-      #               City == input$Cities &
-      #               FIPS == input$Tracts &
-      #               Category == input$Categories &
-      #               Measure == input$Measures)
-      
-      # y <- subset(combined_tract_metrics,
-      #             State == input$States &
-      #               City == input$Cities &
-      #               Category == input$Categories &
-      #               Measure == input$Measures)
-      # 
-      # z <- subset(combined_tract_metrics,
-      #             State == input$States,
-      #             City == input$Cities)
-      
+     
       # output$estimate <- renderValueBox({
       #   valueBox(formatC(x$Estimate, digits = 1, format = "f"),
       #            subtitle = "Estimate")
@@ -111,14 +93,24 @@ shinyServer(function(input, output) {
       #            subtitle = "Population")
       # })
     
-      leafletProxy("map") %>% 
-        clearPopups() %>%
-        clearMarkers() %>%
-        addCircleMarkers(data = x, ~Long, ~Lat, layerId = ~City)
-        # plot_geo(data = x, lat = ~Lat, lon = ~Long) %>% 
-        # add_markers(
-        #   text = ~paste(City)
-        # )
+      # leafletProxy("map") %>%
+      #   tm <- tm_shape(x) + tm_polygons("Estimate")
+        # clearPopups() %>%
+        # clearMarkers() %>%
+        # addCircleMarkers(data = x, ~Long, ~Lat, layerId = ~City)
+      # g <- list(
+      #   scope = 'usa',
+      #   projection = list(type = 'albers usa'),
+      #   lakecolor = toRGB('white')
+      # )
+      # plot_geo(data = x, x = ~Long , y = ~Lat) %>%
+      #   add_polygons(line = list(width = 0.4)) %>%
+      #   add_polygons(
+      #     fillcolor = 'transparent',
+      #     line = list(color = 'black', width = 0.5),
+      #     showlegend = FALSE, hoverinfo = 'none'
+      #   ) %>%
+      #   layout(geo = g)
       
       # output$maptable <- renderDataTable({
       #   cities_frame_table <- x %>% 
@@ -127,13 +119,13 @@ shinyServer(function(input, output) {
       
       output$barplot <- renderPlot({
         
-        ggplot(data = x, aes(x = reorder(factor(FIPS), -Estimate), y = Estimate)) +
+        ggplot(data = x, aes(x = reorder(factor(City), -Estimate), y = Estimate)) +
           geom_bar(stat = "identity")
       })
     
       output$table <- renderDataTable({
         cities_frame_table <- x %>% 
-          select(State, City, FIPS, Year, Category, Measure, Estimate)
+          dplyr::select(State, City, Year, Category, Measure, Estimate)
       },rownames = FALSE, extensions = 'Buttons', options = list(dom = 'Bfrtip',
                                                                buttons = list('copy', 'print', list(
                                                                  extend = 'collection',
@@ -141,19 +133,19 @@ shinyServer(function(input, output) {
                                                                  text = 'Download'
                                                                ))))
     
-      observe({
-        click <- input$map_marker_click
-          if (is.null(click))
-            return()
-      
-        text <-
-          paste(click$id)
-      
-        leafletProxy(mapId = "map") %>%
-          clearPopups() %>%
-          addPopups(data = click, lat = ~lat, lng = ~lng, popup = text) %>% 
-          setView(lng = click$lng, lat = click$lat, zoom = 6)
-      })
+      # observe({
+      #   click <- input$map_marker_click
+      #     if (is.null(click))
+      #       return()
+      # 
+      #   text <-
+      #     paste(click$id)
+      # 
+      #   leafletProxy(mapId = "map") %>%
+      #     clearPopups() %>%
+      #     addPopups(data = click, lat = ~lat, lng = ~lng, popup = text) %>% 
+      #     setView(lng = click$lng, lat = click$lat, zoom = 6)
+      # })
       
       # output$scatter <- renderPlot({
       #   ggplot(z, aes(x = x$Measure == input$in_msr, y = z$Measure == input$out_msr)) +

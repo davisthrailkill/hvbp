@@ -171,7 +171,7 @@ tracts_shapes <- st_read("data/500Cities_Boundaries/CityBoundaries.shp")
 #   group_by(Hospital.Ownership) %>% 
 #   summarize(Mean.Score = mean(Total.Performance.Score, na.rm = TRUE)) %>% 
 #   ungroup() %>% 
-#   select(Hospital.Ownership, Mean.Score)
+#   dplyr::select(Hospital.Ownership, Mean.Score)
 # 
 # ggplot(ownership_scores, aes(x=reorder(Hospital.Ownership, -Mean.Score), y=Mean.Score)) +
 #   geom_bar(stat = "identity") +
@@ -189,14 +189,14 @@ tracts_shapes$PLACEFIPS <- as.numeric(as.character(tracts_shapes$PLACEFIPS))
 tracts_shapes$STPLFIPS <- as.numeric(as.character(tracts_shapes$STPLFIPS))
 
 tracts_shapes_df <- tracts_shapes %>% 
-  select(STPLFIPS, geometry)
+  dplyr::select(STPLFIPS, geometry)
 
 
 cities18 <- cities18 %>% 
   rename("Population2010" = "PopulationCount")
 
-cities16v2 <- select(cities16, -c("Data_Value_Footnote_Symbol", "Data_Value_Footnote"))
-cities18v2 <- select(cities18, -c("Data_Value_Footnote_Symbol", "Data_Value_Footnote"))
+cities16v2 <- dplyr::select(cities16, -c("Data_Value_Footnote_Symbol", "Data_Value_Footnote"))
+cities18v2 <- dplyr::select(cities18, -c("Data_Value_Footnote_Symbol", "Data_Value_Footnote"))
 
 cities_combined <- bind_rows(cities16v2, cities18v2)
 cities_combined <- cities_combined %>%
@@ -214,11 +214,11 @@ cities_combined$Long <- as.numeric(cities_combined$Long)
 
 cities_geography <- cities_combined %>% 
   filter(StateAbbr != "US" & is.na(TractFIPS)) %>% 
-  select(StateAbbr, State, City, CityFIPS, GeoLocation, Lat, Long)
+  dplyr::select(StateAbbr, State, City, CityFIPS, GeoLocation, Lat, Long)
 
 tract_geography <- cities_combined %>% 
   filter(StateAbbr != "US" & !is.na(TractFIPS)) %>% 
-  select(StateAbbr, State, City, CityFIPS, TractFIPS, GeoLocation, Lat, Long)
+  dplyr::select(StateAbbr, State, City, CityFIPS, TractFIPS, GeoLocation, Lat, Long)
 
 cities_geo <- cities_geography %>% 
   distinct() %>% 
@@ -229,7 +229,7 @@ tracts_geo <- tract_geography %>%
   saveRDS(file = "data/tracts_geo.rds")
 
 cities_combined_v2 <- cities_combined %>% 
-  select(Year, StateAbbr, State, City, GeographicLevel, Category, Measure, Data_Value_Type,
+  dplyr::select(Year, StateAbbr, State, City, GeographicLevel, Category, Measure, Data_Value_Type,
          Data_Value, Population2010, GeoLocation, Lat, Long, CityFIPS, TractFIPS, 
          Short_Question_Text) %>% 
   spread(Data_Value_Type, Data_Value)
@@ -299,14 +299,14 @@ cities_chdb_df <- cities_df %>%
   filter(City %in% chdb_cities)
 
 city_pops <- cities_chdb_df %>% 
-  select(CityFIPS, Population2010) %>% 
+  dplyr::select(CityFIPS, Population2010) %>% 
   distinct()
 
 chdb_city_socecon <- chdb_city_socecon %>% 
   left_join(city_pops, by = c("stpl_fips" = "CityFIPS"))
 
 chdb_city_socecon_v2 <- chdb_city_socecon %>% 
-  select(data_yr_type, StateAbbr, State, city_name, stpl_fips, geo_level, category, metric_name,
+  dplyr::select(data_yr_type, StateAbbr, State, city_name, stpl_fips, geo_level, category, metric_name,
          est, Population2010, GeoLocation, Lat, Long)
 
 chdb_city_socecon_v3 <- chdb_city_socecon_v2 %>% 
@@ -314,9 +314,9 @@ chdb_city_socecon_v3 <- chdb_city_socecon_v2 %>%
            GeographicLevel = geo_level, Category = category, Measure = metric_name,
            Estimate = est, Population = Population2010)
 
-# need to select only relevant columns from cities_chdb_df, then bind_rows with socecon_v2
+# need to dplyr::select only relevant columns from cities_chdb_df, then bind_rows with socecon_v2
 cities_chdb_df_v2 <- cities_chdb_df %>%
-  select(Year, StateAbbr, State, City, CityFIPS, GeographicLevel, Category, Short_Question_Text,
+  dplyr::select(Year, StateAbbr, State, City, CityFIPS, GeographicLevel, Category, Short_Question_Text,
          `Crude prevalence`, Population2010, GeoLocation, Lat, Long) %>% 
   rename(Measure = Short_Question_Text, Estimate = `Crude prevalence`, Population = Population2010)
 
@@ -338,7 +338,8 @@ combined_metrics_df$Measure <- as.factor(combined_metrics_df$Measure)
 #   rename(FIPS = CityFIPS)
 
 combined_metrics_df_v2 <- combined_metrics_df %>% 
-  left_join(tracts_shapes_df, by = c("CityFIPS" = "STPLFIPS"))
+  left_join(tracts_shapes_df, by = c("CityFIPS" = "STPLFIPS")) %>% 
+  rename(FIPS = CityFIPS)
 
 
 chdb_tract_geo <- chdb_tract %>% 
@@ -353,17 +354,17 @@ tracts_chdb_df <- tracts_df %>%
   filter(TractFIPS %in% tracts_chdb)
 
 # tract_pops <- tracts_chdb_df %>%
-#   select(TractFIPS, Population2010) %>%
+#   dplyr::select(TractFIPS, Population2010) %>%
 #   distinct()
 # 
 # chdb_tract_socecon <- chdb_tract_socecon %>% 
 #   left_join(tract_pops, by = c("stcotr_fips" = "TractFIPS"))
 
 counties_lookup <- chdb_tract_socecon %>% 
-  select(county_name, stcotr_fips)
+  dplyr::select(county_name, stcotr_fips)
 
 chdb_tract_socecon_v2 <- chdb_tract_socecon %>% 
-  select(data_yr_type, StateAbbr, State, city_name, county_name, CityFIPS, stcotr_fips, geo_level, category, metric_name,
+  dplyr::select(data_yr_type, StateAbbr, State, city_name, county_name, CityFIPS, stcotr_fips, geo_level, category, metric_name,
          est, denom, GeoLocation, Lat, Long)
 
 chdb_tract_socecon_v3 <- chdb_tract_socecon_v2 %>% 
@@ -376,7 +377,7 @@ tracts_chdb_df <- tracts_chdb_df %>%
   distinct()
 
 tracts_chdb_df_v2 <- tracts_chdb_df %>%
-  select(Year, StateAbbr, State, City, county_name, CityFIPS, TractFIPS, GeographicLevel, Category, Short_Question_Text,
+  dplyr::select(Year, StateAbbr, State, City, county_name, CityFIPS, TractFIPS, GeographicLevel, Category, Short_Question_Text,
          `Crude prevalence`, Population2010, GeoLocation, Lat, Long) %>% 
   rename(County = county_name, Measure = Short_Question_Text, Estimate = `Crude prevalence`, Population = Population2010)
 

@@ -11,7 +11,7 @@ shinyUI(
         radioButtons("geo", "Geographic Level",
                      choices = c("City" = "City", "Census Tract" = "Census Tract")),
         selectInput("States", "States", choices = states),
-        uiOutput("cityselection"),
+        # uiOutput("cityselection"),
         # conditionalPanel(
         #   condition = "input.geo == 'Census Tract'",
         #   uiOutput("tractselection")
@@ -19,6 +19,7 @@ shinyUI(
         selectInput("Categories", "Category", choices = categories),
         uiOutput("measureselection"),
         actionButton("go", "Go"),
+        # actionButton("reset", "Reset Map"),
         downloadButton("download", "Download")
         )
     ),
@@ -33,7 +34,7 @@ shinyUI(
                     status = "primary",
                     width = NULL,
                     leafletOutput("map", height = 500)
-                    # plotlyOutput("map", height = 500)
+                    #plotlyOutput("map", height = 500)
                   )
                 )
                 

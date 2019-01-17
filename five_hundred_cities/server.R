@@ -1,11 +1,11 @@
 # Define server logic
 shinyServer(function(input, output) {
   
-  output$cityselection <- renderUI({
-    cities_available <- combined_tract_metrics[combined_tract_metrics$State == input$States, "City"]
-    
-    selectInput("Cities", "City", choices = unique(cities_available))
-  })
+  # output$cityselection <- renderUI({
+  #   cities_available <- combined_tract_metrics[combined_tract_metrics$State == input$States, "City"]
+  #   
+  #   selectInput("Cities", "City", choices = unique(cities_available))
+  # })
   
   output$measureselection <- renderUI({
     measures_available <- combined_tract_metrics[combined_tract_metrics$Category == input$Categories, 
@@ -32,8 +32,13 @@ shinyServer(function(input, output) {
   # })
   
   output$map <- renderLeaflet({
-    map <- tm_shape(combined_city_metrics, projection = 2163) + tm_polygons()
-    tmap_leaflet(map)
+    leaflet() %>% 
+      clearPopups() %>% 
+      clearMarkers() %>%
+      addTiles()%>% 
+      addCircleMarkers(data = cities_geo, ~Long, ~Lat,
+                       radius = 5,
+                       fillOpacity = 0.5)
   })
   # output$map <- renderPlotly({
   #   g <- list(
@@ -77,8 +82,8 @@ shinyServer(function(input, output) {
     # if(input$radio == "City"){
       x <- subset(geo_level(),
                   State == input$States &
-                    City == input$Cities &
-                    # FIPS == input$Tracts &
+                    #City == input$Cities &
+                    #FIPS == input$Tracts &
                     Category == input$Categories &
                     Measure == input$Measures)
       
@@ -93,22 +98,23 @@ shinyServer(function(input, output) {
       #            subtitle = "Population")
       # })
     
-      # leafletProxy("map") %>%
-      #   tm <- tm_shape(x) + tm_polygons("Estimate")
-        # clearPopups() %>%
-        # clearMarkers() %>%
-        # addCircleMarkers(data = x, ~Long, ~Lat, layerId = ~City)
+      leafletProxy("map") %>%
+        clearPopups() %>%
+        clearMarkers() %>%
+        addCircleMarkers(data = x, ~Long, ~Lat, layerId = ~City,
+                         radius = 7,
+                         fillOpacity = 0.5)
       # g <- list(
       #   scope = 'usa',
       #   projection = list(type = 'albers usa'),
       #   lakecolor = toRGB('white')
       # )
-      # plot_geo(data = x, x = ~Long , y = ~Lat) %>%
-      #   add_polygons(line = list(width = 0.4)) %>%
-      #   add_polygons(
-      #     fillcolor = 'transparent',
-      #     line = list(color = 'black', width = 0.5),
-      #     showlegend = FALSE, hoverinfo = 'none'
+      # plotlyProxy("map", session) %>%
+      #   plotlyProxyInvoke(
+      #     "addTraces", marker = 
+      #   )
+      #   add_markers(
+      #     text = ~paste(City, Estimate)
       #   ) %>%
       #   layout(geo = g)
       
@@ -119,8 +125,9 @@ shinyServer(function(input, output) {
       
       output$barplot <- renderPlot({
         
-        ggplot(data = x, aes(x = reorder(factor(City), -Estimate), y = Estimate)) +
-          geom_bar(stat = "identity")
+        ggplot(data = x, aes(x = reorder(factor(City), -Estimate), y = Estimate, fill = Year)) +
+          geom_bar(stat = "identity", position = position_dodge()) +
+          labs(x = "City", y = "Estimate", title = "Estimate per City")
       })
     
       output$table <- renderDataTable({
@@ -133,19 +140,7 @@ shinyServer(function(input, output) {
                                                                  text = 'Download'
                                                                ))))
     
-      # observe({
-      #   click <- input$map_marker_click
-      #     if (is.null(click))
-      #       return()
-      # 
-      #   text <-
-      #     paste(click$id)
-      # 
-      #   leafletProxy(mapId = "map") %>%
-      #     clearPopups() %>%
-      #     addPopups(data = click, lat = ~lat, lng = ~lng, popup = text) %>% 
-      #     setView(lng = click$lng, lat = click$lat, zoom = 6)
-      # })
+      
       
       # output$scatter <- renderPlot({
       #   ggplot(z, aes(x = x$Measure == input$in_msr, y = z$Measure == input$out_msr)) +
@@ -160,22 +155,21 @@ shinyServer(function(input, output) {
         }
       )
       })
-    # x <- subset(combined_tract_metrics, State == input$States &
-    #               City == input$Cities &
-    #               Category == input$Categories &
-    #               Measure == input$Measures)
-    # 
-    # output$estimate <- renderValueBox({
-    #   valueBox(formatC(x$Estimate, digits = 1, format = "f"),
-    #            subtitle = "Estimate")
-    # })
-    # 
-    # output$population <- renderValueBox({
-    #   valueBox(formatC(x$Population, digits = 0, format = "f"),
-    #            subtitle = "Population")
-    # })
-    # 
-    # 
+  
+  observe({
+    click <- input$map_marker_click
+    if (is.null(click))
+      return()
+  
+    text <-
+      paste(click$id)
+  
+    leafletProxy(mapId = "map") %>%
+      clearPopups() %>%
+      addPopups(data = click, lat = ~lat, lng = ~lng, popup = text) %>%
+      setView(lng = click$lng, lat = click$lat, zoom = 6)
+  })
+    
     # # plotlyOutput("map") %>% 
     # #   plot_geo(data = x, lat = ~Lat, lon = ~Long) %>% 
     # #   add_markers(

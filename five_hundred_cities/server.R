@@ -1,14 +1,22 @@
 # Define server logic
 shinyServer(function(input, output) {
   
-  # output$cityselection <- renderUI({
-  #   cities_available <- combined_tract_metrics[combined_tract_metrics$State == input$States, "City"]
-  #   
-  #   selectInput("Cities", "City", choices = unique(cities_available))
-  # })
+  output$cityselection <- renderUI({
+    cities_available <- combined_tract_metrics[combined_tract_metrics$State == input$States, "City"]
+
+    selectInput("Cities", "City", choices = unique(cities_available))
+  })
+  
+  geo_level <- reactive({
+    if(input$geo == "City"){
+      data <- combined_city_metrics
+    } else if(input$geo == "Census Tract"){
+      data <- combined_tract_metrics
+    }
+  })
   
   output$measureselection <- renderUI({
-    measures_available <- combined_tract_metrics[combined_tract_metrics$Category == input$Categories, 
+    measures_available <- geo_level()[geo_level()$Category == input$Categories, 
                                        "Measure"]
     
     selectInput("Measures", "Measures", choices = unique(measures_available))
@@ -16,8 +24,8 @@ shinyServer(function(input, output) {
   
   # output$tractselection <- renderUI({
   #   tracts_available <- combined_tract_metrics[combined_tract_metrics$City == input$Cities,
-  #                                              "FIPS"]
-  #   
+  #                                              "TractFIPS"]
+  # 
   #   selectInput("Tracts", "Census Tract", choices = unique(tracts_available))
   # })
   
@@ -31,15 +39,15 @@ shinyServer(function(input, output) {
   #            subtitle = "Population")
   # })
   
-  output$map <- renderLeaflet({
-    leaflet() %>% 
-      clearPopups() %>% 
-      clearMarkers() %>%
-      addTiles()%>% 
-      addCircleMarkers(data = cities_geo, ~Long, ~Lat,
-                       radius = 5,
-                       fillOpacity = 0.5)
-  })
+  # output$map <- renderLeaflet({
+  #   leaflet() %>% 
+  #     clearPopups() %>% 
+  #     clearMarkers() %>%
+  #     addTiles()%>% 
+  #     addCircleMarkers(data = cities_geo, ~Long, ~Lat,
+  #                      radius = 5,
+  #                      fillOpacity = 0.5)
+  # })
   # output$map <- renderPlotly({
   #   g <- list(
   #     scope = 'usa',
@@ -60,7 +68,7 @@ shinyServer(function(input, output) {
   # }, rownames = FALSE)
   
   output$table <- renderDataTable({
-    cities_frame_table <- combined_tract_metrics %>% 
+    cities_frame_table <- combined_city_metrics %>% 
       dplyr::select(State, City, Year, Category, Measure, Estimate)
   },rownames = FALSE, extensions = 'Buttons', options = list(dom = 'Bfrtip',
                                                              buttons = list('copy', 'print', list(
@@ -69,23 +77,26 @@ shinyServer(function(input, output) {
                                                                text = 'Download'
                                                              ))))
   
-  geo_level <- reactive({
-    if(input$geo == "City"){
-      data <- combined_city_metrics
-    } else if(input$geo == "Census Tract"){
-      data <- combined_tract_metrics
-    }
-  })
+
   
   
-  filteredData <- observeEvent(input$go, {
+  filteredData_cities <- reactive({#input$go, {
     # if(input$radio == "City"){
-      x <- subset(geo_level(),
+      x <- subset(combined_city_metrics, #geo_level(),
                   State == input$States &
                     #City == input$Cities &
                     #FIPS == input$Tracts &
                     Category == input$Categories &
                     Measure == input$Measures)
+  })
+  
+  filteredData_tracts <- reactive({
+    x <- subset(combined_tract_metrics,
+                State == input$States &
+                  City == input$Cities &
+                  Category == input$Categories &
+                  Measure == input$Measures)
+  })
       
      
       # output$estimate <- renderValueBox({
@@ -97,13 +108,18 @@ shinyServer(function(input, output) {
       #   valueBox(formatC(x$Population, digits = 0, format = "f"),
       #            subtitle = "Population")
       # })
+
     
-      leafletProxy("map") %>%
-        clearPopups() %>%
-        clearMarkers() %>%
-        addCircleMarkers(data = x, ~Long, ~Lat, layerId = ~City,
-                         radius = 7,
-                         fillOpacity = 0.5)
+  output$map <- renderLeaflet({
+    leaflet("map") %>% 
+      clearPopups() %>%
+      clearMarkers() %>%
+      addTiles() %>% 
+      addCircleMarkers(data = filteredData_cities(), ~Long, ~Lat, layerId = ~City,
+                       radius = filteredData_cities()$Estimate/2,
+                       fillOpacity = 0.3)
+    })
+        
       # g <- list(
       #   scope = 'usa',
       #   projection = list(type = 'albers usa'),
@@ -123,22 +139,37 @@ shinyServer(function(input, output) {
       #     select(Year, FIPS, Estimate, Population)
       # }, rownames = FALSE)
       
-      output$barplot <- renderPlot({
-        
-        ggplot(data = x, aes(x = reorder(factor(City), -Estimate), y = Estimate, fill = Year)) +
-          geom_bar(stat = "identity", position = position_dodge()) +
-          labs(x = "City", y = "Estimate", title = "Estimate per City")
-      })
-    
-      output$table <- renderDataTable({
-        cities_frame_table <- x %>% 
-          dplyr::select(State, City, Year, Category, Measure, Estimate)
-      },rownames = FALSE, extensions = 'Buttons', options = list(dom = 'Bfrtip',
-                                                               buttons = list('copy', 'print', list(
-                                                                 extend = 'collection',
-                                                                 buttons = c('csv', 'excel', 'pdf'),
-                                                                 text = 'Download'
-                                                               ))))
+  output$barplot_cities <- renderPlot({
+    ggplot(data = filteredData_cities(), aes(x = reorder(factor(City), -Estimate), y = Estimate, fill = as.factor(Year))) +
+      geom_bar(stat = "identity", position = position_dodge()) +
+      geom_errorbar(aes(ymax=mean(filteredData_cities()$Estimate), ymin=mean(filteredData_cities()$Estimate))) +
+      labs(x = "City", y = "Estimate", title = "Estimate per City")
+  })
+  
+  output$barplot_tracts <- renderPlot({
+    ggplot(data = filteredData_tracts(), aes(x = reorder(factor(TractFIPS), -Estimate), y = Estimate, fill = as.factor(Year))) +
+      geom_bar(stat = "identity", position = position_dodge()) +
+      geom_errorbar(aes(ymax=mean(filteredData_tracts()$Estimate), ymin=mean(filteredData_tracts()$Estimate))) +
+      labs(x = "City", y = "Estimate", title = "Estimate per City")
+  })
+  
+  tableData <- reactive({
+    if(input$geo == "City"){
+      table_data <- filteredData_cities()
+    } else if(input$geo == "Census Tract"){
+      table_data <- filteredData_tracts()
+    }
+  })
+
+  output$table <- renderDataTable({
+    cities_frame_table <- tableData() %>% 
+      dplyr::select(State, City, Year, Category, Measure, Estimate)
+  },rownames = FALSE, extensions = 'Buttons', options = list(dom = 'Bfrtip',
+                                                           buttons = list('copy', 'print', list(
+                                                             extend = 'collection',
+                                                             buttons = c('csv', 'excel', 'pdf'),
+                                                             text = 'Download'
+                                                           ))))
     
       
       
@@ -147,28 +178,41 @@ shinyServer(function(input, output) {
       #     geom_point()
       # })
     
-      output$download <- downloadHandler(
-        filename = function(){
-          paste("data_", Sys.Date(), ".csv", sep = "")
-        }, content = function(file){
-          write.csv(x, file)
-        }
-      )
-      })
+  output$download <- downloadHandler(
+    filename = function(){
+      paste("data_", Sys.Date(), ".csv", sep = "")
+    }, content = function(file){
+      write.csv(filteredData_tracts(), file)
+    }
+  )
+  
+  # show_popup <- function(city, lat, long){
+  #   selectedCity <- filteredData()$City == city
+  #   content <- as.character("Estimate: ", selectedCity$Estimate)
+  #   leafletProxy("map") %>%
+  #     addPopups(long, lat, content, layerId = City)
+  # }
+      
   
   observe({
-    click <- input$map_marker_click
+    leafletProxy("map") %>% clearPopups()
+    click <- input$map_marker_mouseover
     if (is.null(click))
       return()
   
     text <-
       paste(click$id)
-  
+    
+    # isolate({
+    #   show_popup(click$id, click$lat, click$lng)
+    # })
+    
     leafletProxy(mapId = "map") %>%
       clearPopups() %>%
-      addPopups(data = click, lat = ~lat, lng = ~lng, popup = text) %>%
-      setView(lng = click$lng, lat = click$lat, zoom = 6)
+      addPopups(data = click, lat = ~lat, lng = ~lng, popup = text)
   })
+})
+
     
     # # plotlyOutput("map") %>% 
     # #   plot_geo(data = x, lat = ~Lat, lon = ~Long) %>% 
@@ -217,5 +261,5 @@ shinyServer(function(input, output) {
     #   }
     # )
   # })
-})
+#})
 

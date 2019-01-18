@@ -45,7 +45,7 @@ in_msrs <- combined_tract_metrics %>%
 
 out_msrs <- combined_tract_metrics %>% 
   filter(Category == "Health Outcomes") %>% 
-  dplyr::select(Measure) %>% 
+  dplyr::select(Measure) %>%
   unique()
 
 # prevention_measures <- as.data.frame(cities_frame) %>% 

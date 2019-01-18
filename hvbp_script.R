@@ -402,6 +402,9 @@ tracts_metrics_df <- tracts_metrics_df %>%
 tracts_metrics_df_v2 <- tracts_metrics_df %>% 
   left_join(tracts_shapes_df, by = c("FIPS" = "STPLFIPS"))
 
+mean_check <- combined_city_metrics %>% 
+  filter(Measure == "Health Insurance")
+
 
 # bind rows - cities and tracts into one
 # combined_citytracts <- bind_rows(combined_metrics_df_v2, tracts_metrics_df_v2)

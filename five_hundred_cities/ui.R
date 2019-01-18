@@ -8,7 +8,7 @@ shinyUI(
         
         radioButtons("geo", "Geographic Level",
                      choices = c("City" = "City", "Census Tract" = "Census Tract")),
-        selectInput("States", "States", choices = states),
+        selectInput("States", "States", choices = states, selected = "Tennessee"),
         conditionalPanel(
           condition = "input.geo == 'Census Tract'",
           uiOutput("cityselection")
@@ -26,7 +26,9 @@ shinyUI(
       mainPanel(
         tabsetPanel(
           tabPanel("Map", leafletOutput("map", height = 500)),
-          tabPanel("City Dashboard", plotOutput("barplot_cities")),
+          tabPanel("City Dashboard",
+                   valueBoxOutput("estimateBox"),
+                   plotOutput("barplot_cities")),
           tabPanel("Census Dashboard", plotOutput("barplot_tracts")),
           tabPanel("Data", dataTableOutput("table"))
         )

@@ -138,6 +138,11 @@ shinyServer(function(input, output) {
       #   cities_frame_table <- x %>% 
       #     select(Year, FIPS, Estimate, Population)
       # }, rownames = FALSE)
+  
+  output$estimateBox <- renderValueBox({
+    valueBox(formatC(mean(filteredData_cities()$Estimate, na.rm = TRUE), 
+                     digits = 1, format = "f"), subtitle = "Estimate")
+  })
       
   output$barplot_cities <- renderPlot({
     ggplot(data = filteredData_cities(), aes(x = reorder(factor(City), -Estimate), y = Estimate, fill = as.factor(Year))) +
@@ -170,19 +175,13 @@ shinyServer(function(input, output) {
                                                              buttons = c('csv', 'excel', 'pdf'),
                                                              text = 'Download'
                                                            ))))
-    
-      
-      
-      # output$scatter <- renderPlot({
-      #   ggplot(z, aes(x = x$Measure == input$in_msr, y = z$Measure == input$out_msr)) +
-      #     geom_point()
-      # })
-    
+  
+  # NEED TO FIX - likely will need to take out list geolocation variable in datasets
   output$download <- downloadHandler(
     filename = function(){
       paste("data_", Sys.Date(), ".csv", sep = "")
     }, content = function(file){
-      write.csv(filteredData_tracts(), file)
+      write.csv(tableData(), file)
     }
   )
   
@@ -212,54 +211,4 @@ shinyServer(function(input, output) {
       addPopups(data = click, lat = ~lat, lng = ~lng, popup = text)
   })
 })
-
-    
-    # # plotlyOutput("map") %>% 
-    # #   plot_geo(data = x, lat = ~Lat, lon = ~Long) %>% 
-    # #   add_markers(
-    # #     text = ~paste(City)
-    # #   )
-    # 
-    # leafletProxy("map") %>%
-    #   clearPopups() %>%
-    #   clearMarkers() %>%
-    #   # addPolygons(data = x, ~Long, ~Lat, fillColor = pal(x$Estimate),
-    #   #             fillOpacity = 0.8,
-    #   #             color = "#BDBDC3",
-    #   #             weight = 2)
-    #   addCircleMarkers(data = x, ~Long, ~Lat, layerId = ~City)
-    # 
-    # output$table <- renderDataTable({
-    #   tracts_frame_table <- x %>% 
-    #     select(State, City, TractFIPS, Year, Category, Measure, Estimate)
-    # },rownames = FALSE, extensions = 'Buttons', options = list(dom = 'Bfrtip',
-    #                                                            buttons = list('copy', 'print', list(
-    #                                                              extend = 'collection',
-    #                                                              buttons = c('csv', 'excel', 'pdf'),
-    #                                                              text = 'Download'
-    #                                                            ))))
-    # 
-    # observe({
-    #   click <- input$map_marker_click
-    #   if (is.null(click))
-    #     return()
-    #   
-    #   text <-
-    #     paste(click$id)
-    #   
-    #   leafletProxy(mapId = "map") %>%
-    #     clearPopups() %>%
-    #     addPopups(data = click, lat = ~lat, lng = ~lng, popup = text) %>% 
-    #     setView(lng = click$lng, lat = click$lat, zoom = 6)
-    # })
-    # 
-    # output$download <- downloadHandler(
-    #   filename = function(){
-    #     paste("data_", Sys.Date(), ".csv", sep = "")
-    #   }, content = function(file){
-    #     write.csv(x, file)
-    #   }
-    # )
-  # })
-#})
 

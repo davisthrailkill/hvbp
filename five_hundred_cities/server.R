@@ -22,6 +22,12 @@ shinyServer(function(input, output) {
     selectInput("Measures", "Measures", choices = unique(measures_available))
   })
   
+  output$yearselection <- renderUI({
+    years_available <- geo_level()[geo_level()$Measure == input$Measures, "Year"]
+    
+    selectInput("Year", "Year", choices = unique(years_available))
+  })
+  
   # output$tractselection <- renderUI({
   #   tracts_available <- combined_tract_metrics[combined_tract_metrics$City == input$Cities,
   #                                              "TractFIPS"]
@@ -116,7 +122,6 @@ shinyServer(function(input, output) {
       clearMarkers() %>%
       addTiles() %>% 
       addCircleMarkers(data = filteredData_cities(), ~Long, ~Lat, layerId = ~City,
-                       radius = filteredData_cities()$Estimate/2,
                        fillOpacity = 0.3)
     })
         
@@ -139,22 +144,27 @@ shinyServer(function(input, output) {
       #     select(Year, FIPS, Estimate, Population)
       # }, rownames = FALSE)
   
-  output$estimateBox <- renderValueBox({
+  output$state_estimateBox <- renderValueBox({
     valueBox(formatC(mean(filteredData_cities()$Estimate, na.rm = TRUE), 
-                     digits = 1, format = "f"), subtitle = "Estimate")
+                     digits = 1, format = "f"), subtitle = "State Estimate")
+  })
+  
+  output$state_popBox <- renderValueBox({
+    valueBox(formatC(mean(filteredData_cities()$Population, na.rm = TRUE), 
+                     digits = 0, format = "f"), subtitle = "State Population")
   })
       
   output$barplot_cities <- renderPlot({
     ggplot(data = filteredData_cities(), aes(x = reorder(factor(City), -Estimate), y = Estimate, fill = as.factor(Year))) +
       geom_bar(stat = "identity", position = position_dodge()) +
-      geom_errorbar(aes(ymax=mean(filteredData_cities()$Estimate), ymin=mean(filteredData_cities()$Estimate))) +
+      #geom_errorbar(aes(ymax=mean(filteredData_cities()$Estimate), ymin=mean(filteredData_cities()$Estimate))) +
       labs(x = "City", y = "Estimate", title = "Estimate per City")
   })
   
   output$barplot_tracts <- renderPlot({
     ggplot(data = filteredData_tracts(), aes(x = reorder(factor(TractFIPS), -Estimate), y = Estimate, fill = as.factor(Year))) +
       geom_bar(stat = "identity", position = position_dodge()) +
-      geom_errorbar(aes(ymax=mean(filteredData_tracts()$Estimate), ymin=mean(filteredData_tracts()$Estimate))) +
+      #geom_errorbar(aes(ymax=mean(filteredData_tracts()$Estimate), ymin=mean(filteredData_tracts()$Estimate))) +
       labs(x = "City", y = "Estimate", title = "Estimate per City")
   })
   
@@ -168,7 +178,7 @@ shinyServer(function(input, output) {
 
   output$table <- renderDataTable({
     cities_frame_table <- tableData() %>% 
-      dplyr::select(State, City, Year, Category, Measure, Estimate)
+      dplyr::select(City, Year, Estimate, Population)
   },rownames = FALSE, extensions = 'Buttons', options = list(dom = 'Bfrtip',
                                                            buttons = list('copy', 'print', list(
                                                              extend = 'collection',

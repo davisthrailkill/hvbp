@@ -405,6 +405,11 @@ tracts_metrics_df_v2 <- tracts_metrics_df %>%
 mean_check <- combined_city_metrics %>% 
   filter(Measure == "Health Insurance")
 
+measure_exp_df <- combined_metrics_df_v2 %>% 
+  dplyr::select(Year, StateAbbr, State, City, FIPS, GeographicLevel, Measure, Estimate, Population,
+         GeoLocation, Lat, Long) %>% 
+  spread(key = Measure, value = Estimate)
+
 
 # bind rows - cities and tracts into one
 # combined_citytracts <- bind_rows(combined_metrics_df_v2, tracts_metrics_df_v2)

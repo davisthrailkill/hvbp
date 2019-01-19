@@ -54,7 +54,7 @@ shinyUI(
                   box(title = "Estimate by City", solidHeader = TRUE,
                     status = "primary",
                     width = 6,
-                    plotOutput("barplot_cities")
+                    plotlyOutput("barplot_cities")
                   ),
                   box(title = "Table", solidHeader = TRUE, status = "primary",
                     # valueBoxOutput("state_estimateBox"),

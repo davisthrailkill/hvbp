@@ -154,11 +154,13 @@ shinyServer(function(input, output) {
                      digits = 0, format = "f"), subtitle = "State Population")
   })
       
-  output$barplot_cities <- renderPlot({
-    ggplot(data = filteredData_cities(), aes(x = reorder(factor(City), -Estimate), y = Estimate, fill = as.factor(Year))) +
-      geom_bar(stat = "identity", position = position_dodge()) +
-      #geom_errorbar(aes(ymax=mean(filteredData_cities()$Estimate), ymin=mean(filteredData_cities()$Estimate))) +
-      labs(x = "City", y = "Estimate", title = "Estimate per City")
+  output$barplot_cities <- renderPlotly({
+    ggplotly({
+      ggplot(data = filteredData_cities(), aes(x = reorder(factor(City), -Estimate), y = Estimate, fill = as.factor(Year))) +
+        geom_bar(stat = "identity", position = position_dodge()) +
+        #geom_errorbar(aes(ymax=mean(filteredData_cities()$Estimate), ymin=mean(filteredData_cities()$Estimate))) +
+        labs(x = "City", y = "Estimate", title = "Estimate per City")
+    })
   })
   
   output$barplot_tracts <- renderPlot({

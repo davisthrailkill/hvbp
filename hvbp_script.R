@@ -212,6 +212,10 @@ cities_combined$Long <- gsub("\\)", "", cities_combined$Long)
 cities_combined$Lat <- as.numeric(cities_combined$Lat)
 cities_combined$Long <- as.numeric(cities_combined$Long)
 
+cities_combined$id <- paste(as.character(cities_combined$UniqueID), as.character(cities_combined$Measure),
+                            sep = "_")
+
+
 cities_geography <- cities_combined %>% 
   filter(StateAbbr != "US" & is.na(TractFIPS)) %>% 
   dplyr::select(StateAbbr, State, City, CityFIPS, GeoLocation, Lat, Long)
@@ -231,17 +235,32 @@ tracts_geo <- tract_geography %>%
 cities_combined_v2 <- cities_combined %>% 
   dplyr::select(Year, StateAbbr, State, City, GeographicLevel, Category, Measure, Data_Value_Type,
          Data_Value, Population2010, GeoLocation, Lat, Long, CityFIPS, TractFIPS, 
-         Short_Question_Text) %>% 
+         Short_Question_Text, id) %>% 
   spread(Data_Value_Type, Data_Value)
+
+cities_combined_v2 <- dplyr::select(cities_combined_v2, -c("Year", "Age-adjusted prevalence"))
+  
+id_meanvalue <- cities_combined_v2 %>% 
+  group_by(id) %>% 
+  summarize(mean_data_value = mean(`Crude prevalence`, na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  dplyr::select(id, mean_data_value)
+
+cities_combined_v3 <- cities_combined_v2 %>% 
+  left_join(id_meanvalue, by = "id")
+
+cities_combined_v4 <- dplyr::select(cities_combined_v3, -`Crude prevalence`)
+
+cities_combined_v5 <- distinct(cities_combined_v4)
 
 
 # extract cities from cities_combined
-cities_df <- cities_combined_v2 %>% 
+cities_df <- cities_combined_v5 %>% 
   filter(GeographicLevel != "Census Tract") #%>% 
   #saveRDS(file = "data/cities_df.rds")
 
 # extract tracts from cities_combined
-tracts_df <- cities_combined_v2 %>% 
+tracts_df <- cities_combined_v5 %>% 
   filter(GeographicLevel == "Census Tract") #%>% 
   #saveRDS(file = "data/tracts_df.rds")
 
@@ -306,22 +325,22 @@ chdb_city_socecon <- chdb_city_socecon %>%
   left_join(city_pops, by = c("stpl_fips" = "CityFIPS"))
 
 chdb_city_socecon_v2 <- chdb_city_socecon %>% 
-  dplyr::select(data_yr_type, StateAbbr, State, city_name, stpl_fips, geo_level, category, metric_name,
+  dplyr::select(StateAbbr, State, city_name, stpl_fips, geo_level, category, metric_name,
          est, Population2010, GeoLocation, Lat, Long)
 
 chdb_city_socecon_v3 <- chdb_city_socecon_v2 %>% 
-  rename(Year = data_yr_type, City = city_name, CityFIPS = stpl_fips,
+  rename(City = city_name, CityFIPS = stpl_fips,
            GeographicLevel = geo_level, Category = category, Measure = metric_name,
            Estimate = est, Population = Population2010)
 
 # need to dplyr::select only relevant columns from cities_chdb_df, then bind_rows with socecon_v2
 cities_chdb_df_v2 <- cities_chdb_df %>%
-  dplyr::select(Year, StateAbbr, State, City, CityFIPS, GeographicLevel, Category, Short_Question_Text,
-         `Crude prevalence`, Population2010, GeoLocation, Lat, Long) %>% 
-  rename(Measure = Short_Question_Text, Estimate = `Crude prevalence`, Population = Population2010)
+  dplyr::select(StateAbbr, State, City, CityFIPS, GeographicLevel, Category, Short_Question_Text,
+         mean_data_value, Population2010, GeoLocation, Lat, Long) %>% 
+  rename(Measure = Short_Question_Text, Estimate = mean_data_value, Population = Population2010)
 
 # convert Year to factor in cities_chdb_df_v2 in order to bind
-cities_chdb_df_v2$Year <- as.factor(as.character(cities_chdb_df_v2$Year))
+# cities_chdb_df_v2$Year <- as.factor(as.character(cities_chdb_df_v2$Year))
 
 # bind rows cities_chdb_df_v2 and chdb_city_socecon_v3
 combined_metrics_df <- bind_rows(cities_chdb_df_v2, chdb_city_socecon_v3)
@@ -364,11 +383,11 @@ counties_lookup <- chdb_tract_socecon %>%
   dplyr::select(county_name, stcotr_fips)
 
 chdb_tract_socecon_v2 <- chdb_tract_socecon %>% 
-  dplyr::select(data_yr_type, StateAbbr, State, city_name, county_name, CityFIPS, stcotr_fips, geo_level, category, metric_name,
+  dplyr::select(StateAbbr, State, city_name, county_name, CityFIPS, stcotr_fips, geo_level, category, metric_name,
          est, denom, GeoLocation, Lat, Long)
 
 chdb_tract_socecon_v3 <- chdb_tract_socecon_v2 %>% 
-  rename(Year = data_yr_type, City = city_name, County = county_name, TractFIPS = stcotr_fips,
+  rename(City = city_name, County = county_name, TractFIPS = stcotr_fips,
           GeographicLevel = geo_level, Category = category, Measure = metric_name,
           Estimate = est, Population = denom)
 
@@ -377,12 +396,12 @@ tracts_chdb_df <- tracts_chdb_df %>%
   distinct()
 
 tracts_chdb_df_v2 <- tracts_chdb_df %>%
-  dplyr::select(Year, StateAbbr, State, City, county_name, CityFIPS, TractFIPS, GeographicLevel, Category, Short_Question_Text,
-         `Crude prevalence`, Population2010, GeoLocation, Lat, Long) %>% 
-  rename(County = county_name, Measure = Short_Question_Text, Estimate = `Crude prevalence`, Population = Population2010)
+  dplyr::select(StateAbbr, State, City, county_name, CityFIPS, TractFIPS, GeographicLevel, Category, Short_Question_Text,
+         mean_data_value, Population2010, GeoLocation, Lat, Long) %>% 
+  rename(County = county_name, Measure = Short_Question_Text, Estimate = mean_data_value, Population = Population2010)
 
 # convert Year to factor in cities_chdb_df_v2 in order to bind
-tracts_chdb_df_v2$Year <- as.factor(as.character(tracts_chdb_df_v2$Year))
+# tracts_chdb_df_v2$Year <- as.factor(as.character(tracts_chdb_df_v2$Year))
 
 # bind rows cities_chdb_df_v2 and chdb_city_socecon_v3
 tracts_metrics_df <- bind_rows(tracts_chdb_df_v2, chdb_tract_socecon_v3)
@@ -402,13 +421,13 @@ tracts_metrics_df <- tracts_metrics_df %>%
 tracts_metrics_df_v2 <- tracts_metrics_df %>% 
   left_join(tracts_shapes_df, by = c("FIPS" = "STPLFIPS"))
 
-mean_check <- combined_city_metrics %>% 
-  filter(Measure == "Health Insurance")
+# mean_check <- combined_city_metrics %>% 
+#   filter(Measure == "Health Insurance")
 
-measure_exp_df <- combined_metrics_df_v2 %>% 
-  dplyr::select(Year, StateAbbr, State, City, FIPS, GeographicLevel, Measure, Estimate, Population,
-         GeoLocation, Lat, Long) %>% 
-  spread(key = Measure, value = Estimate)
+# measure_exp_df <- combined_metrics_df_v2 %>% 
+#   dplyr::select(Year, StateAbbr, State, City, FIPS, GeographicLevel, Measure, Estimate, Population,
+#          GeoLocation, Lat, Long) %>% 
+#   spread(key = Measure, value = Estimate)
 
 
 # bind rows - cities and tracts into one

@@ -238,16 +238,108 @@ shinyServer(function(input, output) {
     if(input$in_msr == "Annual Checkup"){
       i <- "Annual Checkup"
     }
+    if(input$in_msr == "Cholesterol Screening"){
+      i <- "Cholesterol Screening"
+    }
+    if(input$in_msr == "Colorectal Cancer Screening"){
+      i <- "Colorectal Cancer Screening"
+    }
+    if(input$in_msr == "Core preventive services for older men"){
+      i <- "Core preventive services for older men"
+    }
+    if(input$in_msr == "Core preventive services for older women"){
+      i <- "Core preventive services for older women"
+    }
+    if(input$in_msr == "Dental Visit"){
+      i <- "Dental Visit"
+    }
+    if(input$in_msr == "Mammography"){
+      i <- "Mammography"
+    }
+    if(input$in_msr == "Pap Smear Test"){
+      i <- "Pap Smear Test"
+    }
+    if(input$in_msr == "Binge Drinking"){
+      i <- "Binge Drinking"
+    }
+    if(input$in_msr == "Current Smoking"){
+      i <- "Current Smoking"
+    }
+    if(input$in_msr == "Physical Inactivity"){
+      i <- "Physical Inactivity"
+    }
+    if(input$in_msr == "Obesity"){
+      i <- "Obesity"
+    }
+    if(input$in_msr == "Sleep <7 hours"){
+      i <- "Sleep <7 hours"
+    }
+    if(input$in_msr == "Absenteeism"){
+      i <- "Absenteeism"
+    }
+    if(input$in_msr == "High school graduation"){
+      i <- "High school graduation"
+    }
+    if(input$in_msr == "Housing cost, excessive"){
+      i <- "Housing cost, excessive"
+    }
+    if(input$in_msr == "Neighborhood racial/ethnic segregation"){
+      i <- "Neighborhood racial/ethnic segregation"
+    }
+    if(input$in_msr == "Racial/ethnic diversity"){
+      i <- "Racial/ethnic diversity"
+    }
+    if(input$in_msr == "Third-grade reading proficiency"){
+      i <- "Third-grade reading proficiency"
+    }
+    if(input$in_msr == "Unemployment"){
+      i <- "Unemployment"
+    }
     if(input$out_msr == "Arthritis"){
       o <- "Arthritis"
+    }
+    if(input$out_msr == "High Blood Pressure"){
+      o <- "High Blood Pressure"
+    }
+    if(input$out_msr == "Stroke"){
+      o <- "Stroke"
+    }
+    if(input$out_msr == "Cancer (except skin)"){
+      o <- "Cancer (except skin)"
+    }
+    if(input$out_msr == "Current Asthma"){
+      o <- "Current Asthma"
+    }
+    if(input$out_msr == "Coronary Heart Disease"){
+      o <- "Coronary Heart Disease"
+    }
+    if(input$out_msr == "COPD"){
+      o <- "COPD"
+    }
+    if(input$out_msr == "Diabetes"){
+      o <- "Diabetes"
+    }
+    if(input$out_msr == "High Cholesterol"){
+      o <- "High Cholesterol"
+    }
+    if(input$out_msr == "Chronic Kidney Disease"){
+      o <- "Chronic Kidney Disease"
+    }
+    if(input$out_msr == "Mental Health"){
+      o <- "Mental Health"
+    }
+    if(input$out_msr == "Physical Health"){
+      o <- "Physical Health"
+    }
+    if(input$out_msr == "Teeth Loss"){
+      o <- "Teeth Loss"
     }
     
     p <- scatter_filter()[, i]
     b <- scatter_filter()[, o]
     
     ggplotly({
-      ggplot(data = scatter_filter(), aes(x = p, 
-                                                 y = b)) +
+      ggplot(data = scatter_filter(), aes(x = p, y = b, text = paste("City:", City))) +
         geom_point()
     })
   })

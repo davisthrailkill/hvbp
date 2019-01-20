@@ -22,11 +22,11 @@ shinyServer(function(input, output) {
     selectInput("Measures", "Measures", choices = unique(measures_available))
   })
   
-  output$yearselection <- renderUI({
-    years_available <- geo_level()[geo_level()$Measure == input$Measures, "Year"]
-    
-    selectInput("Year", "Year", choices = unique(years_available))
-  })
+  # output$yearselection <- renderUI({
+  #   years_available <- geo_level()[geo_level()$Measure == input$Measures, "Year"]
+  #   
+  #   selectInput("Year", "Year", choices = unique(years_available))
+  # })
   
   # output$tractselection <- renderUI({
   #   tracts_available <- combined_tract_metrics[combined_tract_metrics$City == input$Cities,
@@ -75,7 +75,7 @@ shinyServer(function(input, output) {
   
   output$table <- renderDataTable({
     cities_frame_table <- combined_city_metrics %>% 
-      dplyr::select(State, City, Year, Category, Measure, Estimate)
+      dplyr::select(State, City, Category, Measure, Estimate)
   },rownames = FALSE, extensions = 'Buttons', options = list(dom = 'Bfrtip',
                                                              buttons = list('copy', 'print', list(
                                                                extend = 'collection',
@@ -156,7 +156,7 @@ shinyServer(function(input, output) {
       
   output$barplot_cities <- renderPlotly({
     ggplotly({
-      ggplot(data = filteredData_cities(), aes(x = reorder(factor(City), -Estimate), y = Estimate, fill = as.factor(Year))) +
+      ggplot(data = filteredData_cities(), aes(x = reorder(factor(City), -Estimate), y = Estimate)) +
         geom_bar(stat = "identity", position = position_dodge()) +
         #geom_errorbar(aes(ymax=mean(filteredData_cities()$Estimate), ymin=mean(filteredData_cities()$Estimate))) +
         labs(x = "City", y = "Estimate", title = "Estimate per City")
@@ -164,7 +164,7 @@ shinyServer(function(input, output) {
   })
   
   output$barplot_tracts <- renderPlot({
-    ggplot(data = filteredData_tracts(), aes(x = reorder(factor(TractFIPS), -Estimate), y = Estimate, fill = as.factor(Year))) +
+    ggplot(data = filteredData_tracts(), aes(x = reorder(factor(TractFIPS), -Estimate), y = Estimate)) +
       geom_bar(stat = "identity", position = position_dodge()) +
       #geom_errorbar(aes(ymax=mean(filteredData_tracts()$Estimate), ymin=mean(filteredData_tracts()$Estimate))) +
       labs(x = "City", y = "Estimate", title = "Estimate per City")
@@ -180,7 +180,7 @@ shinyServer(function(input, output) {
 
   output$table <- renderDataTable({
     cities_frame_table <- tableData() %>% 
-      dplyr::select(City, Year, Estimate, Population)
+      dplyr::select(City, Estimate, Population)
   },rownames = FALSE, extensions = 'Buttons', options = list(dom = 'Bfrtip',
                                                            buttons = list('copy', 'print', list(
                                                              extend = 'collection',
@@ -221,6 +221,35 @@ shinyServer(function(input, output) {
     leafletProxy(mapId = "map") %>%
       clearPopups() %>%
       addPopups(data = click, lat = ~lat, lng = ~lng, popup = text)
+  })
+  
+  scatter_filter <- reactive({
+    x <- subset(cities_wide,
+                State == input$scatterStates)
+  })
+  
+  output$scatter <- renderPlotly({
+    if(input$in_msr == "Health Insurance"){
+      i <- "Health Insurance"
+    }
+    if(input$in_msr == "Taking BP Medication"){
+      i <- "Taking BP Medication"
+    }
+    if(input$in_msr == "Annual Checkup"){
+      i <- "Annual Checkup"
+    }
+    if(input$out_msr == "Arthritis"){
+      o <- "Arthritis"
+    }
+    
+    p <- scatter_filter()[, i]
+    b <- scatter_filter()[, o]
+    
+    ggplotly({
+      ggplot(data = scatter_filter(), aes(x = p, 
+                                                 y = b)) +
+        geom_point()
+    })
   })
 })
 

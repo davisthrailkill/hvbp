@@ -324,6 +324,8 @@ city_pops <- cities_chdb_df %>%
 chdb_city_socecon <- chdb_city_socecon %>% 
   left_join(city_pops, by = c("stpl_fips" = "CityFIPS"))
 
+chdb_city_socecon$geo_level <- "City"
+
 chdb_city_socecon_v2 <- chdb_city_socecon %>% 
   dplyr::select(StateAbbr, State, city_name, stpl_fips, geo_level, category, metric_name,
          est, Population2010, GeoLocation, Lat, Long)
@@ -367,6 +369,8 @@ chdb_tract_geo <- chdb_tract %>%
 
 chdb_tract_socecon <- chdb_tract_geo %>% 
   filter(category == "Social and Economic Factors" & group_name == "total population")
+
+chdb_tract_socecon$geo_level <- "Census Tract"
 
 tracts_chdb <- unique(chdb_tract_socecon$stcotr_fips)
 tracts_chdb_df <- tracts_df %>% 
@@ -424,10 +428,16 @@ tracts_metrics_df_v2 <- tracts_metrics_df %>%
 # mean_check <- combined_city_metrics %>% 
 #   filter(Measure == "Health Insurance")
 
-# measure_exp_df <- combined_metrics_df_v2 %>% 
-#   dplyr::select(Year, StateAbbr, State, City, FIPS, GeographicLevel, Measure, Estimate, Population,
-#          GeoLocation, Lat, Long) %>% 
-#   spread(key = Measure, value = Estimate)
+
+measure_exp_df <- combined_metrics_df_v2 %>%
+  dplyr::select(StateAbbr, State, City, FIPS, GeographicLevel, Measure, Estimate, Population,
+         GeoLocation, Lat, Long) %>%
+  spread(key = Measure, value = Estimate)
+
+
+saveRDS(measure_exp_df, "data/cities_wide.rds")
+
+
 
 
 # bind rows - cities and tracts into one

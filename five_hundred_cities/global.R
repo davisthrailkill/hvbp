@@ -20,6 +20,7 @@ tracts_shapes <- st_read("../data/500Cities_Boundaries/CityBoundaries.shp",
 combined_city_metrics <- readRDS("../data/combined_city_metrics_v2.rds")
 combined_tract_metrics <- readRDS("../data/tracts_metrics.rds")
 combined_citytract <- readRDS("../data/combined_citytracts.rds")
+cities_wide <- readRDS("../data/cities_wide.rds")
 
 # tracts<-spTransform(tracts_shapes, CRS("+init=epsg:4326"))
 
@@ -27,6 +28,10 @@ combined_citytract <- readRDS("../data/combined_citytracts.rds")
 #   aggregate_map(by = "State")
 
 states <- combined_tract_metrics %>% 
+  dplyr::select(State) %>% 
+  unique()
+
+scatter_states <- cities_wide %>% 
   dplyr::select(State) %>% 
   unique()
 
@@ -38,6 +43,7 @@ categories <- combined_tract_metrics %>%
   dplyr::select(Category) %>% 
   unique()
 
+
 in_msrs <- combined_tract_metrics %>% 
   filter(Category != "Health Outcomes") %>% 
   dplyr::select(Measure) %>% 
@@ -48,34 +54,25 @@ out_msrs <- combined_tract_metrics %>%
   dplyr::select(Measure) %>%
   unique()
 
-# prevention_measures <- as.data.frame(cities_frame) %>% 
-#   filter(Category == "Prevention") %>% 
-#   select(Short_Question_Text) %>% 
+# prevention_measures <- combined_city_metrics %>%
+#   filter(Category == "Prevention") %>%
+#   select(Short_Question_Text) %>%
 #   unique()
 # 
-# outcome_measures <- as.data.frame(cities_frame) %>% 
-#   filter(Category == "Health Outcomes") %>% 
-#   select(Short_Question_Text) %>% 
+# socialecon_measures <- combined_city_metrics %>% 
+#   filter(Category == "Social and Economic Factors") %>% 
+#   select(Measure) %>% 
+#   unique()
+#   
+# 
+# outcome_measures <- combined_city_metrics %>%
+#   filter(Category == "Health Outcomes") %>%
+#   select(Short_Question_Text) %>%
 #   unique()
 # 
-# behavior_measures <- as.data.frame(cities_frame) %>% 
-#   filter(Category == "Unhealthy Behaviors") %>% 
-#   select(Short_Question_Text) %>% 
-#   unique()
-
-# odd_measures <- c("High Blood Pressure",
-#                   "Taking BP Medication",
-#                   "Cholesterol Screening",
-#                   "High Cholesterol")
-# 
-# odd_years <- as.data.frame(cities_frame) %>% 
-#   filter(Short_Question_Text %in% odd_measures) %>% 
-#   select(Year) %>% 
-#   unique()
-# 
-# even_years <- as.data.frame(cities_frame) %>% 
-#   filter(!Short_Question_Text %in% odd_measures) %>% 
-#   select(Year) %>% 
+# behavior_measures <- combined_city_metrics %>%
+#   filter(Category == "Unhealthy Behaviors") %>%
+#   select(Short_Question_Text) %>%
 #   unique()
 
 

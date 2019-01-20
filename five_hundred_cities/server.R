@@ -158,6 +158,7 @@ shinyServer(function(input, output) {
     ggplotly({
       ggplot(data = filteredData_cities(), aes(x = reorder(factor(City), -Estimate), y = Estimate)) +
         geom_bar(stat = "identity", position = position_dodge()) +
+        theme_light() +
         #geom_errorbar(aes(ymax=mean(filteredData_cities()$Estimate), ymin=mean(filteredData_cities()$Estimate))) +
         labs(x = "City", y = "Estimate", title = "Estimate per City")
     })
@@ -166,6 +167,7 @@ shinyServer(function(input, output) {
   output$barplot_tracts <- renderPlot({
     ggplot(data = filteredData_tracts(), aes(x = reorder(factor(TractFIPS), -Estimate), y = Estimate)) +
       geom_bar(stat = "identity", position = position_dodge()) +
+      theme_light() +
       #geom_errorbar(aes(ymax=mean(filteredData_tracts()$Estimate), ymin=mean(filteredData_tracts()$Estimate))) +
       labs(x = "City", y = "Estimate", title = "Estimate per City")
   })
@@ -335,12 +337,14 @@ shinyServer(function(input, output) {
       o <- "Teeth Loss"
     }
     
-    p <- scatter_filter()[, i]
-    b <- scatter_filter()[, o]
+    x_var <- scatter_filter()[, i]
+    y_var <- scatter_filter()[, o]
     
     ggplotly({
-      ggplot(data = scatter_filter(), aes(x = p, y = b, text = paste("City:", City))) +
-        geom_point()
+      ggplot(data = scatter_filter(), aes(x = x_var, y = y_var)) +
+        geom_point(aes(col = City)) +
+        theme_light() +
+        labs(x = input$in_msr, y = input$out_msr)
     })
   })
 })

@@ -1,14 +1,16 @@
 # Define UI for application
 shinyUI(
   dashboardPage(
-    dashboardHeader(title = "500 Cities"),
+    dashboardHeader(title = "SDOH Explorer"),
     
     dashboardSidebar(
       sidebarMenu(
-        menuItem("Map", tabName = "map", icon = icon("map")),
-        menuItem("Measure Explorer", tabName = "measure_explorer", icon = icon("dashboard")),
+        menuItem("Overview", tabName = "overview", icon = icon("fas fa-book")),
+        menuItem("Map", tabName = "map", icon = icon("fas fa-map-marked-alt")),
+        menuItem("Measure Explorer", tabName = "measure_explorer", 
+                 icon = icon("fas fa-chart-line")),
         #menuItem("Census Dashboard", tabName = "census_dashboard", icon = icon("dashboard")),
-        menuItem("Data", tabName = "data", icon = icon("data")),
+        menuItem("Data", tabName = "data", icon = icon("fas fa-database"))
         # radioButtons("geo", "Geographic Level",
         #              choices = c("City" = "City", "Census Tract" = "Census Tract")),
         # selectInput("States", "States", choices = states, selected = "Tennessee"),
@@ -25,10 +27,12 @@ shinyUI(
         #uiOutput("yearselection"),
         # actionButton("go", "Go"),
         # actionButton("reset", "Reset Map"),
-        downloadButton("download", "Download")
+        # downloadButton("download", "Download")
         )),
     dashboardBody(
       tabItems(
+        tabItem("overview",
+                h1("This is an overview")),
         tabItem("map",
                 fluidRow(
                   box(title = "Inputs", solidHeader = TRUE,
@@ -77,10 +81,11 @@ shinyUI(
                     plotlyOutput("scatter"))),
         #tabItem("census_dashboard", plotOutput("barplot_tracts")),
         tabItem("data",
-                box(title = "Data Table", solidHeader = TRUE,
+                box(title = "Raw Data", solidHeader = TRUE,
                     status = "primary",
                     width = 12,
-                    dataTableOutput("dataTable")))
+                    dataTableOutput("dataTable"),
+                    downloadButton("download", "Download")))
       )
     )
   )

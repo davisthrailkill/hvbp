@@ -73,15 +73,10 @@ shinyServer(function(input, output) {
   #     select(FIPS, Year, Estimate, Population)
   # }, rownames = FALSE)
   
-  output$table <- renderDataTable({
-    cities_frame_table <- combined_city_metrics %>% 
-      dplyr::select(State, City, Category, Measure, Estimate)
-  },rownames = FALSE, extensions = 'Buttons', options = list(dom = 'Bfrtip',
-                                                             buttons = list('copy', 'print', list(
-                                                               extend = 'collection',
-                                                               buttons = c('csv', 'excel', 'pdf'),
-                                                               text = 'Download'
-                                                             ))))
+  # output$table <- renderDataTable({
+  #   cities_frame_table <- combined_city_metrics %>% 
+  #     dplyr::select(State, City, Category, Measure, Estimate)
+  # },rownames = FALSE)
   
 
   
@@ -157,7 +152,8 @@ shinyServer(function(input, output) {
       
   output$barplot_cities <- renderPlotly({
     ggplotly({
-      ggplot(data = filteredData_cities(), aes(x = reorder(factor(City), Estimate), y = Estimate)) +
+      ggplot(data = head(arrange(filteredData_cities(), desc(Estimate)),10),
+                           aes(x = reorder(factor(City), Estimate), y = Estimate)) +
         geom_bar(stat = "identity") +
         coord_flip() +
         theme_light() +
@@ -187,12 +183,7 @@ shinyServer(function(input, output) {
     cities_frame_table <- tableData() %>% 
       dplyr::select(City, Estimate, Population) %>% 
       arrange(desc(Estimate))
-  },rownames = FALSE, extensions = 'Buttons', options = list(dom = 'Bfrtip',
-                                                           buttons = list('copy', 'print', list(
-                                                             extend = 'collection',
-                                                             buttons = c('csv', 'excel', 'pdf'),
-                                                             text = 'Download'
-                                                           ))))
+  },rownames = FALSE)
   
   # NEED TO FIX - likely will need to take out list geolocation variable in datasets
   output$download <- downloadHandler(

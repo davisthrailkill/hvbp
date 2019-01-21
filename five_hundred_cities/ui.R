@@ -2,7 +2,6 @@
 shinyUI(
   dashboardPage(
     dashboardHeader(title = "SDOH Explorer"),
-    
     dashboardSidebar(
       sidebarMenu(
         menuItem("Overview", tabName = "overview", icon = icon("fas fa-book")),

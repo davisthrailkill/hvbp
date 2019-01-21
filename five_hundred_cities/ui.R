@@ -67,7 +67,8 @@ shinyUI(
                 box(title = "Inputs", solidHeader = TRUE,
                     status = "primary",
                     width = 3,
-                    selectInput("scatterStates", "State", choices = scatter_states),
+                    selectInput("scatterStates", "State", choices = scatter_states,
+                                selected = "Tennessee"),
                     selectInput("in_msr", "Input Measure", choices = in_msrs),
                     selectInput("out_msr", "Health Outcome", choices = out_msrs)),
                 box(title = "Measure Explorer", solidHeader = TRUE,
@@ -75,7 +76,11 @@ shinyUI(
                     width = 9,
                     plotlyOutput("scatter"))),
         #tabItem("census_dashboard", plotOutput("barplot_tracts")),
-        tabItem("data")
+        tabItem("data",
+                box(title = "Data Table", solidHeader = TRUE,
+                    status = "primary",
+                    width = 12,
+                    dataTableOutput("dataTable")))
       )
     )
   )

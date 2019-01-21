@@ -359,7 +359,7 @@ combined_metrics_df$Measure <- as.factor(combined_metrics_df$Measure)
 #   rename(FIPS = CityFIPS)
 
 combined_metrics_df_v2 <- combined_metrics_df %>% 
-  left_join(tracts_shapes_df, by = c("CityFIPS" = "STPLFIPS")) %>% 
+  #left_join(tracts_shapes_df, by = c("CityFIPS" = "STPLFIPS")) %>% 
   rename(FIPS = CityFIPS)
 
 
@@ -422,8 +422,8 @@ tracts_metrics_df <- tracts_metrics_df %>%
 # combined_tractmetrics_df <- tracts_metrics_df %>% 
 #   rename(FIPS = TractFIPS)
 
-tracts_metrics_df_v2 <- tracts_metrics_df %>% 
-  left_join(tracts_shapes_df, by = c("FIPS" = "STPLFIPS"))
+# tracts_metrics_df_v2 <- tracts_metrics_df %>% 
+#   left_join(tracts_shapes_df, by = c("FIPS" = "STPLFIPS"))
 
 # mean_check <- combined_city_metrics %>% 
 #   filter(Measure == "Health Insurance")

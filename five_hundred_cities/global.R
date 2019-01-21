@@ -43,16 +43,19 @@ categories <- combined_tract_metrics %>%
   dplyr::select(Category) %>% 
   unique()
 
-
-in_msrs <- combined_tract_metrics %>% 
-  filter(Category != "Health Outcomes") %>% 
+in_msrs <- combined_city_metrics %>% 
+  filter(Category != "Health Outcomes" & Measure != "Violent crime") %>% 
   dplyr::select(Measure) %>% 
   unique()
 
-out_msrs <- combined_tract_metrics %>% 
+out_msrs <- combined_city_metrics %>% 
   filter(Category == "Health Outcomes") %>% 
   dplyr::select(Measure) %>%
   unique()
+
+downloadTable <- combined_city_metrics %>% 
+  dplyr::select(State, City, Category, Measure, Estimate, Population) %>% 
+  arrange(State, City, Category, desc(Estimate))
 
 # prevention_measures <- combined_city_metrics %>%
 #   filter(Category == "Prevention") %>%

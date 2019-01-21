@@ -162,7 +162,7 @@ shinyServer(function(input, output) {
         coord_flip() +
         theme_light() +
         #geom_errorbar(aes(ymax=mean(filteredData_cities()$Estimate), ymin=mean(filteredData_cities()$Estimate))) +
-        labs(x = "City", y = "Estimate", title = "Estimate per City")
+        labs(x = "City", y = "Estimate")
     })
   })
   
@@ -185,7 +185,8 @@ shinyServer(function(input, output) {
 
   output$table <- renderDataTable({
     cities_frame_table <- tableData() %>% 
-      dplyr::select(City, Estimate, Population)
+      dplyr::select(City, Estimate, Population) %>% 
+      arrange(desc(Estimate))
   },rownames = FALSE, extensions = 'Buttons', options = list(dom = 'Bfrtip',
                                                            buttons = list('copy', 'print', list(
                                                              extend = 'collection',
@@ -198,7 +199,7 @@ shinyServer(function(input, output) {
     filename = function(){
       paste("data_", Sys.Date(), ".csv", sep = "")
     }, content = function(file){
-      write.csv(tableData(), file)
+      write.csv(downloadTable, file)
     }
   )
   
@@ -349,6 +350,12 @@ shinyServer(function(input, output) {
         theme_light() +
         labs(x = input$in_msr, y = input$out_msr)
     })
+  })
+  
+  output$dataTable <- renderDataTable({
+    dataTable <- combined_city_metrics %>% 
+      dplyr::select(State, City, Category, Measure, Estimate, Population) %>% 
+      arrange(State, City, Category, desc(Estimate))
   })
 })
 

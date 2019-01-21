@@ -117,13 +117,14 @@ shinyServer(function(input, output) {
 
     
   output$map <- renderLeaflet({
-    leaflet("map") %>% 
+    leaflet("map") %>%
       clearPopups() %>%
       clearMarkers() %>%
-      addTiles() %>% 
+      addTiles() %>%
       addCircleMarkers(data = filteredData_cities(), ~Long, ~Lat, layerId = ~City,
                        fillOpacity = 0.3)
     })
+  
         
       # g <- list(
       #   scope = 'usa',
@@ -156,8 +157,9 @@ shinyServer(function(input, output) {
       
   output$barplot_cities <- renderPlotly({
     ggplotly({
-      ggplot(data = filteredData_cities(), aes(x = reorder(factor(City), -Estimate), y = Estimate)) +
-        geom_bar(stat = "identity", position = position_dodge()) +
+      ggplot(data = filteredData_cities(), aes(x = reorder(factor(City), Estimate), y = Estimate)) +
+        geom_bar(stat = "identity") +
+        coord_flip() +
         theme_light() +
         #geom_errorbar(aes(ymax=mean(filteredData_cities()$Estimate), ymin=mean(filteredData_cities()$Estimate))) +
         labs(x = "City", y = "Estimate", title = "Estimate per City")
@@ -165,8 +167,9 @@ shinyServer(function(input, output) {
   })
   
   output$barplot_tracts <- renderPlot({
-    ggplot(data = filteredData_tracts(), aes(x = reorder(factor(TractFIPS), -Estimate), y = Estimate)) +
-      geom_bar(stat = "identity", position = position_dodge()) +
+    ggplot(data = filteredData_tracts(), aes(x = reorder(factor(TractFIPS), Estimate), y = Estimate)) +
+      geom_bar(stat = "identity") +
+      coord_flip() +
       theme_light() +
       #geom_errorbar(aes(ymax=mean(filteredData_tracts()$Estimate), ymin=mean(filteredData_tracts()$Estimate))) +
       labs(x = "City", y = "Estimate", title = "Estimate per City")

@@ -154,7 +154,8 @@ shinyServer(function(input, output) {
     ggplotly({
       ggplot(data = head(arrange(filteredData_cities(), desc(Estimate)),10),
                            aes(x = reorder(factor(City), Estimate), y = Estimate)) +
-        geom_bar(stat = "identity") +
+        geom_bar(stat = "identity", fill = "steelblue") +
+        geom_text(aes(label = Estimate)) +
         coord_flip() +
         theme_light() +
         #geom_errorbar(aes(ymax=mean(filteredData_cities()$Estimate), ymin=mean(filteredData_cities()$Estimate))) +
@@ -338,6 +339,7 @@ shinyServer(function(input, output) {
     ggplotly({
       ggplot(data = scatter_filter(), aes(x = x_var, y = y_var)) +
         geom_point(aes(col = City)) +
+        geom_smooth(method = "lm") +
         theme_light() +
         labs(x = input$in_msr, y = input$out_msr)
     })

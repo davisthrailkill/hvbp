@@ -7,16 +7,16 @@ shinyServer(function(input, output) {
     selectInput("Cities", "City", choices = unique(cities_available))
   })
   
-  geo_level <- reactive({
-    if(input$geo == "City"){
-      data <- combined_city_metrics
-    } else if(input$geo == "Census Tract"){
-      data <- combined_tract_metrics
-    }
-  })
+  # geo_level <- reactive({
+  #   if(input$geo == "City"){
+  #     data <- combined_city_metrics
+  #   } else if(input$geo == "Census Tract"){
+  #     data <- combined_tract_metrics
+  #   }
+  # })
   
   output$measureselection <- renderUI({
-    measures_available <- geo_level()[geo_level()$Category == input$Categories, 
+    measures_available <- combined_city_metrics[combined_city_metrics$Category == input$Categories, 
                                        "Measure"]
     
     selectInput("Measures", "Measures", choices = unique(measures_available))
@@ -171,16 +171,16 @@ shinyServer(function(input, output) {
       labs(x = "City", y = "Estimate", title = "Estimate per City")
   })
   
-  tableData <- reactive({
-    if(input$geo == "City"){
-      table_data <- filteredData_cities()
-    } else if(input$geo == "Census Tract"){
-      table_data <- filteredData_tracts()
-    }
-  })
+  # tableData <- reactive({
+  #   if(input$geo == "City"){
+  #     table_data <- filteredData_cities()
+  #   } else if(input$geo == "Census Tract"){
+  #     table_data <- filteredData_tracts()
+  #   }
+  # })
 
   output$table <- renderDataTable({
-    cities_frame_table <- tableData() %>% 
+    cities_frame_table <- filteredData_cities() %>% 
       dplyr::select(City, Estimate, Population) %>% 
       arrange(desc(Estimate))
   },rownames = FALSE)
@@ -347,6 +347,6 @@ shinyServer(function(input, output) {
     dataTable <- combined_city_metrics %>% 
       dplyr::select(State, City, Category, Measure, Estimate, Population) %>% 
       arrange(State, City, Category, desc(Estimate))
-  })
+  }, filter = "top", options = list(autoWidth = TRUE))
 })
 

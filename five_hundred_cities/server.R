@@ -19,7 +19,7 @@ shinyServer(function(input, output) {
     measures_available <- combined_city_metrics[combined_city_metrics$Category == input$Categories, 
                                        "Measure"]
     
-    selectInput("Measures", "Measures", choices = unique(measures_available))
+    selectInput("Measures", "Measure", choices = unique(measures_available))
   })
   
   # output$yearselection <- renderUI({
@@ -155,7 +155,6 @@ shinyServer(function(input, output) {
       ggplot(data = head(arrange(filteredData_cities(), desc(Estimate)),10),
                            aes(x = reorder(factor(City), Estimate), y = Estimate)) +
         geom_bar(stat = "identity", fill = "steelblue") +
-        geom_text(aes(label = Estimate)) +
         coord_flip() +
         theme_light() +
         #geom_errorbar(aes(ymax=mean(filteredData_cities()$Estimate), ymin=mean(filteredData_cities()$Estimate))) +

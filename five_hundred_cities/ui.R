@@ -34,7 +34,7 @@ shinyUI(
         tabItem("overview",
                 tags$h2("Welcome to the Social Determinants of Health Explorer"),
                 tags$div(list(
-                  tags$p(
+                  tags$h4(
                     "The United States spends a higher percentage of its gross
                     domestic product on medical care expenditure than many other developed
                     countries, but we tend to have poorer health outcomes.
@@ -46,7 +46,7 @@ shinyUI(
                   )
                 ),
                 tags$br(),
-                tags$p("We can therefore predict that medical care alone is insufficient
+                tags$h4("We can therefore predict that medical care alone is insufficient
                 for ensuring higher quality health. In fact, another recent study suggests that
                 only about 10-20% of a population's health outcomes can be directly attributed
                 to medical care. The other 80-90% can be attributed to what are known as",

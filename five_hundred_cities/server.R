@@ -459,13 +459,14 @@ shinyServer(function(input, output) {
     corr <- cor(x_var, y_var, method = "pearson")
     
     valueBox(formatC(corr, digits = 2,
-                     format = "f"), subtitle = "Correlation")
+                     format = "f"), subtitle = "Correlation Coefficient", color = "blue",
+             icon = icon("far fa-chart-bar"))
   })
   
   output$dataTable <- renderDataTable({
     dataTable <- combined_city_metrics %>% 
       dplyr::select(State, City, Category, Measure, Estimate, Population) %>% 
       arrange(State, City, Category, desc(Estimate))
-  }, filter = "top", options = list(autoWidth = TRUE))
+  }, rownames = FALSE, filter = "top", options = list(autoWidth = TRUE))
 })
 

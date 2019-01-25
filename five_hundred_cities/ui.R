@@ -10,7 +10,7 @@ shinyUI(
                  icon = icon("fas fa-chart-line")),
         #menuItem("Census Dashboard", tabName = "census_dashboard", icon = icon("dashboard")),
         menuItem("Data", tabName = "data", icon = icon("fas fa-database")),
-        menuItem("Sources", tabName = "sources", icon = icon("far fa-newspaper"))
+        menuItem("Measure Specs", tabName = "measure_specs", icon = icon("far fa-newspaper"))
         # radioButtons("geo", "Geographic Level",
         #              choices = c("City" = "City", "Census Tract" = "Census Tract")),
         # selectInput("States", "States", choices = states, selected = "Tennessee"),
@@ -41,7 +41,7 @@ shinyUI(
                     According to a recent study published in the Journal of the American 
                     Medical Association (JAMA), the U.S. spent 17.8% of its GDP on 
                     healthcare in 2016 while other countries' spending ranged from 9.6% in 
-                    Australia to 12.4% in Switzerland. Yet, ife expectancy in the U.S. was 
+                    Australia to 12.4% in Switzerland. Yet, life expectancy in the U.S. was 
                     the lowest of the 10 countries in the study at 78.8 years."
                   )
                 ),
@@ -128,7 +128,7 @@ shinyUI(
                     width = 12,
                     dataTableOutput("dataTable"),
                     downloadButton("download", "Download"))),
-        tabItem("sources")
+        tabItem("measure_specs")
       )
     )
   )

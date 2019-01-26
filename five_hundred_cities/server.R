@@ -19,7 +19,8 @@ shinyServer(function(input, output) {
     measures_available <- combined_city_metrics[combined_city_metrics$Category == input$Categories, 
                                        "Measure"]
     
-    selectInput("Measures", "Measure", choices = unique(measures_available))
+    selectInput("Measures", "Measure", choices = unique(measures_available), 
+                selected = "Physical Inactivity")
   })
   
   # output$yearselection <- renderUI({

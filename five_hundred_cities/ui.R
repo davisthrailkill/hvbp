@@ -10,7 +10,7 @@ shinyUI(
                  icon = icon("fas fa-chart-line")),
         #menuItem("Census Dashboard", tabName = "census_dashboard", icon = icon("dashboard")),
         menuItem("Data", tabName = "data", icon = icon("fas fa-database")),
-        menuItem("Measure Specs", tabName = "measure_specs", icon = icon("far fa-newspaper"))
+        menuItem("Measure Specs", icon = icon("far fa-newspaper"), href = "https://www.cdc.gov/500cities/measure-definitions.htm")
         # radioButtons("geo", "Geographic Level",
         #              choices = c("City" = "City", "Census Tract" = "Census Tract")),
         # selectInput("States", "States", choices = states, selected = "Tennessee"),
@@ -70,7 +70,8 @@ shinyUI(
                         condition = "input.geo == 'Census Tract'",
                         uiOutput("cityselection")
                       ),
-                      selectInput("Categories", "Category", choices = categories),
+                      selectInput("Categories", "Category", choices = categories, 
+                                  selected = "Unhealthy Behaviors"),
                       uiOutput("measureselection")),
                   box(title = "Interactive Map", solidHeader = TRUE,
                     status = "primary",

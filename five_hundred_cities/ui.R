@@ -8,26 +8,8 @@ shinyUI(
         menuItem("Dashboard", tabName = "map", icon = icon("dashboard")),
         menuItem("Measure Explorer", tabName = "measure_explorer", 
                  icon = icon("fas fa-chart-line")),
-        #menuItem("Census Dashboard", tabName = "census_dashboard", icon = icon("dashboard")),
         menuItem("Data", tabName = "data", icon = icon("fas fa-database")),
         menuItem("Measure Specs", icon = icon("far fa-newspaper"), href = "https://www.cdc.gov/500cities/measure-definitions.htm")
-        # radioButtons("geo", "Geographic Level",
-        #              choices = c("City" = "City", "Census Tract" = "Census Tract")),
-        # selectInput("States", "States", choices = states, selected = "Tennessee"),
-        # conditionalPanel(
-        #   condition = "input.geo == 'Census Tract'",
-        #   uiOutput("cityselection")
-        # ),
-        # conditionalPanel(
-        #   condition = "input.geo == 'Census Tract'",
-        #   uiOutput("tractselection")
-        # ),
-        # selectInput("Categories", "Category", choices = categories),
-        # uiOutput("measureselection"),
-        #uiOutput("yearselection"),
-        # actionButton("go", "Go"),
-        # actionButton("reset", "Reset Map"),
-        # downloadButton("download", "Download")
         )),
     dashboardBody(
       tabItems(
@@ -62,9 +44,6 @@ shinyUI(
                       width = 3,
                       "Use the inputs below to filter the visualizations on this page.",
                       tags$hr(),
-                      # radioButtons("geo", "Geographic Level",
-                      #              choices = c("City" = "City", "Census Tract" = "Census Tract"),
-                      #              inline = TRUE),
                       selectInput("States", "State", choices = states, selected = "Tennessee"),
                       conditionalPanel(
                         condition = "input.geo == 'Census Tract'",
@@ -88,8 +67,6 @@ shinyUI(
                   ),
                   box(title = "List of Cities, Associated Estimates, and Population", 
                       solidHeader = TRUE, status = "primary",
-                    # valueBoxOutput("state_estimateBox"),
-                    # valueBoxOutput("state_popBox")
                     dataTableOutput("table")
                   )
                 )
@@ -134,15 +111,4 @@ shinyUI(
     )
   )
 )
-
-    
-    # ("Interactive Map", tabName = "map", icon = icon("map-marked")),
-    # menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
-    # menuItem("Data", tabName = "data", icon = icon("database")),
-    
-    
-      #tags$style(type = "text/css", "#map {height: calc(100vh - 80px) !important;}"),
-      #leafletOutput("map")
-
-
 

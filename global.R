@@ -11,16 +11,14 @@ library(tmaptools)
 library(raster)
 
 
-cities_frame <- readRDS("../data/cities_df.rds")
-cities_geo <- readRDS("../data/cities_geo.rds")
-tracts_frame <- readRDS("../data/tracts_df.rds")
-tracts_geo <- readRDS("../data/tracts_geo.rds")
-tracts_shapes <- st_read("../data/500Cities_Boundaries/CityBoundaries.shp",
-                         stringsAsFactors = FALSE)
-combined_city_metrics <- readRDS("../data/combined_city_metrics_v2.rds")
-combined_tract_metrics <- readRDS("../data/tracts_metrics.rds")
-combined_citytract <- readRDS("../data/combined_citytracts.rds")
-cities_wide <- readRDS("../data/cities_wide.rds")
+cities_frame <- readRDS("data/cities_df.rds")
+cities_geo <- readRDS("data/cities_geo.rds")
+tracts_frame <- readRDS("data/tracts_df.rds")
+tracts_geo <- readRDS("data/tracts_geo.rds")
+combined_city_metrics <- readRDS("data/combined_city_metrics_v2.rds")
+combined_tract_metrics <- readRDS("data/tracts_metrics.rds")
+combined_citytract <- readRDS("data/combined_citytracts.rds")
+cities_wide <- readRDS("data/cities_wide.rds")
 
 
 

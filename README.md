@@ -22,4 +22,4 @@ The World Health Organization has defined **Social Determinants of Health** as "
 - Socioeconomic Factors (do you have a high school degree? are you employed?)
 - Physical Environment (do you live around a lot of crime? do you live close to a healthcare provider?)
 
-My application, the Social Determinants of Health Explorer, allows health policy analysts and medical researchers a way to explore the relationship between Social Determinants and health outcomes across the 500 most populated cities in the United States. Findings from this application could potentially lead to designing public health programs to better serve populations.
+My application, the [Social Determinants of Health Explorer,](https://davisthrailkill.shinyapps.io/social_determinants_app/) allows health policy analysts and medical researchers a way to explore the relationship between Social Determinants and health outcomes across the 500 most populated cities in the United States. Findings from this application could potentially lead to designing public health programs to better serve populations.
